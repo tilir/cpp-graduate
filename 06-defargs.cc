@@ -10,7 +10,7 @@ struct Derived : public Base {
 };
 
 int main() {
-  Base *pb = new Derived{};  
+  Base *pb = new Derived{};
   std::cout << pb->foo() << std::endl;
   delete pb;
 }

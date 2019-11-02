@@ -35,7 +35,7 @@ int main() {
   IOFile *piof = new IOFile{5};
   OutputFile *pof = new OutputFile{5};
   InputFile *pif = new InputFile{5};
- 
+
   std::cout << typeid(*piof).name() << std::endl;
   std::cout << typeid(*pof).name() << std::endl;
   std::cout << typeid(*pif).name() << std::endl;

@@ -5,9 +5,7 @@
 #include <ctime>
 
 struct myless {
-  bool operator()(const int &lhs, const int &rhs) {
-    return lhs > rhs;
-  }
+  bool operator()(const int &lhs, const int &rhs) { return lhs > rhs; }
 };
 
 int main(int argc, char **argv) {

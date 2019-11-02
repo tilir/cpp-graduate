@@ -8,12 +8,16 @@ struct File {
 
 struct InputFile : virtual public File {
   int b;
-  InputFile(int b) : File(b * 2), b{b} { std::cout << "IFile ctor" << std::endl; }
+  InputFile(int b) : File(b * 2), b{b} {
+    std::cout << "IFile ctor" << std::endl;
+  }
 };
 
 struct OutputFile : virtual public File {
   int c;
-  OutputFile(int c) : File(c * 3), c{c} { std::cout << "OFile ctor" << std::endl; }
+  OutputFile(int c) : File(c * 3), c{c} {
+    std::cout << "OFile ctor" << std::endl;
+  }
 };
 
 struct IOFile : public InputFile, public OutputFile {
@@ -25,7 +29,7 @@ struct IOFile : public InputFile, public OutputFile {
 
 int main() {
   IOFile *piof = new IOFile{11};
-  std::cout << std::hex << "piof = " << piof << ": " << std::dec;  
+  std::cout << std::hex << "piof = " << piof << ": " << std::dec;
   std::cout << piof->d << std::endl;
 
   File *pf = static_cast<File *>(piof);
@@ -35,18 +39,18 @@ int main() {
   InputFile *pif = dynamic_cast<InputFile *>(pf);
   std::cout << std::hex << "pif = " << pif << ": " << std::dec;
   std::cout << pif->b << std::endl;
-  
-  OutputFile *pof = dynamic_cast<OutputFile *>(pf);  
+
+  OutputFile *pof = dynamic_cast<OutputFile *>(pf);
   std::cout << std::hex << "pof = " << pof << ": " << std::dec;
   std::cout << pof->c << std::endl;
-  
+
   pif = dynamic_cast<InputFile *>(pof);
   std::cout << std::hex << "pif = " << pif << ": " << std::dec;
   std::cout << pif->b << std::endl;
-  
+
   piof = dynamic_cast<IOFile *>(pf);
-  std::cout << std::hex << "piof = " << piof << ": " << std::dec;  
-  std::cout << piof->d << std::endl;  
-  
+  std::cout << std::hex << "piof = " << piof << ": " << std::dec;
+  std::cout << piof->d << std::endl;
+
   delete piof;
 }

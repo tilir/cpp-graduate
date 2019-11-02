@@ -7,28 +7,34 @@
 //------------------------------------------------------------------------------
 
 class PublicBase {
-public:  
+public:
   int open = 0;
+
 protected:
   int semiclosed = 1;
+
 private:
   int closed = 2;
 };
 
 class ProtectedBase {
-public:  
+public:
   int open = 3;
+
 protected:
   int semiclosed = 4;
+
 private:
   int closed = 5;
 };
 
 class PrivateBase {
-public:  
+public:
   int open = 6;
+
 protected:
   int semiclosed = 7;
+
 private:
   int closed = 8;
 };
@@ -39,20 +45,20 @@ private:
 //
 //------------------------------------------------------------------------------
 
-struct PublicDerive: public PublicBase {
-  int get_open() const { return open; } 
+struct PublicDerive : public PublicBase {
+  int get_open() const { return open; }
   int get_semiclosed() const { return semiclosed; }
   // int get_closed() const { return closed; }
 };
 
-struct ProtectedDerive: protected ProtectedBase {
-  int get_open() const { return open; } 
+struct ProtectedDerive : protected ProtectedBase {
+  int get_open() const { return open; }
   int get_semiclosed() const { return semiclosed; }
   // int get_closed() const { return closed; }
 };
 
-struct PrivateDerive: private PrivateBase {
-  int get_open() const { return open; } 
+struct PrivateDerive : private PrivateBase {
+  int get_open() const { return open; }
   int get_semiclosed() const { return semiclosed; }
   // int get_closed() const { return closed; }
 };
@@ -63,20 +69,20 @@ struct PrivateDerive: private PrivateBase {
 //
 //------------------------------------------------------------------------------
 
-struct PublicDerive2: public PublicDerive {
-  int get_open() const { return open; } 
+struct PublicDerive2 : public PublicDerive {
+  int get_open() const { return open; }
   int get_semiclosed() const { return semiclosed; }
   // int get_closed() const { return closed; }
 };
 
-struct ProtectedDerive2: protected ProtectedDerive {
-  int get_open() const { return open; } 
+struct ProtectedDerive2 : protected ProtectedDerive {
+  int get_open() const { return open; }
   int get_semiclosed() const { return semiclosed; }
   // int get_closed() const { return closed; }
 };
 
-struct PrivateDerive2: private PrivateDerive {
-  // int get_open() const { return open; } 
+struct PrivateDerive2 : private PrivateDerive {
+  // int get_open() const { return open; }
   // int get_semiclosed() const { return semiclosed; }
   // int get_closed() const { return closed; }
 };
@@ -92,7 +98,7 @@ int main() {
   a.open;
   // a.semiclosed;
   // a.closed;
-  
+
   ProtectedDerive b;
   // b.open;
   // b.semiclosed;
@@ -103,4 +109,3 @@ int main() {
   // c.semiclosed;
   // c.closed;
 }
-

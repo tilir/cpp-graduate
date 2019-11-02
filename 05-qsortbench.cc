@@ -4,9 +4,7 @@
 #include <cstring>
 #include <ctime>
 
-int less(const int &lhs, const int &rhs) {
-  return lhs > rhs;
-}
+int less(const int &lhs, const int &rhs) { return lhs > rhs; }
 
 int main(int argc, char **argv) {
   size_t nelts, i;

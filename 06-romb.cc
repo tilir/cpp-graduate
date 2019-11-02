@@ -3,6 +3,7 @@
 struct File {
   int a;
   File(int a) : a{a} {}
+  virtual ~File() {}
 };
 
 struct InputFile : public File {

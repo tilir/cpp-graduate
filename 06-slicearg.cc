@@ -3,7 +3,7 @@
 struct A {
   int a_;
   A(int a) : a_(a) {}
-  virtual A& operator=(const A& rhs) { 
+  virtual A &operator=(const A &rhs) {
     a_ = rhs.a_;
     return *this;
   }
@@ -13,27 +13,25 @@ struct A {
 struct B : public A {
   int b_;
   B(int b) : A(b / 2), b_(b) {}
-  B& operator=(const A& rhs) override {
-    const B& brhs = static_cast<const B&>(rhs);
+  B &operator=(const A &rhs) override {
+    const B &brhs = static_cast<const B &>(rhs);
     a_ = brhs.a_;
     b_ = brhs.b_;
     return *this;
   }
 };
 
-std::ostream& operator<< (std::ostream& os, const A& a) {
+std::ostream &operator<<(std::ostream &os, const A &a) {
   os << a.a_;
   return os;
 }
 
-std::ostream& operator<< (std::ostream& os, const B& b) {
+std::ostream &operator<<(std::ostream &os, const B &b) {
   os << b.a_ << " " << b.b_;
   return os;
 }
 
-void foo(A a) {
-  std::cout << a << std::endl;
-}
+void foo(A a) { std::cout << a << std::endl; }
 
 int main() {
   B b1(10);

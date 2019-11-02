@@ -3,16 +3,21 @@
 struct File {
   int a;
   File(int a) : a{a} { std::cout << "File ctor" << std::endl; }
+  virtual ~File() {}
 };
 
 struct InputFile : virtual public File {
   int b;
-  InputFile(int b) : File(b * 2), b{b} { std::cout << "IFile ctor" << std::endl; }
+  InputFile(int b) : File(b * 2), b{b} {
+    std::cout << "IFile ctor" << std::endl;
+  }
 };
 
 struct OutputFile : virtual public File {
   int c;
-  OutputFile(int c) : File(c * 3), c{c} { std::cout << "OFile ctor" << std::endl; }
+  OutputFile(int c) : File(c * 3), c{c} {
+    std::cout << "OFile ctor" << std::endl;
+  }
 };
 
 struct IOFile : public InputFile, public OutputFile {

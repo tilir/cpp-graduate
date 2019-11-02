@@ -10,7 +10,7 @@ struct Foo {
 
 struct Bar {
   Bar() {}
-  Bar(const Foo &) { std::cout << "Ctor Foo -> Bar" << std::endl; } 
+  Bar(const Foo &) { std::cout << "Ctor Foo -> Bar" << std::endl; }
   operator Foo() {
     std::cout << "Op Bar -> Foo" << std::endl;
     return Foo{};

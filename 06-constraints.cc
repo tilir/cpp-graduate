@@ -1,10 +1,7 @@
 #include <iostream>
 
 struct Matrix {
-  template <typename T>
-  virtual void pow(T x) {
-    std::cout << x << std::endl;
-  }
+  template <typename T> virtual void pow(T x) { std::cout << x << std::endl; }
 
   virtual ~Matrix() {}
 };

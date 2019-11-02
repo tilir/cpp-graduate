@@ -10,7 +10,7 @@ struct B : public A {
   B(int b) : A(b / 2), b_(b) {}
 };
 
-std::ostream& operator<< (std::ostream& os, const B& b) {
+std::ostream &operator<<(std::ostream &os, const B &b) {
   os << b.a_ << " " << b.b_;
   return os;
 }
@@ -18,7 +18,7 @@ std::ostream& operator<< (std::ostream& os, const B& b) {
 int main() {
   B b1(10);
   B b2(8);
-  A& a_ref = b2;
+  A &a_ref = b2;
   a_ref = b1;
   std::cout << b2 << std::endl;
 }
