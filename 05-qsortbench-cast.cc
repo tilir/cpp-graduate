@@ -4,7 +4,7 @@
 #include <cstring>
 #include <ctime>
 
-struct myless { 
+struct myless {
   static bool less(const int &lhs, const int &rhs) { return lhs > rhs; }
   using lessptr_t = bool (*)(const int &lhs, const int &rhs);
   operator lessptr_t() const { return less; }

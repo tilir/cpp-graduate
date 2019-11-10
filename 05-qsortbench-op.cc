@@ -5,7 +5,7 @@
 #include <ctime>
 
 struct myless {
-  bool operator()(const int &lhs, const int &rhs) { return lhs > rhs; }
+  bool operator()(const int &lhs, const int &rhs) const { return lhs > rhs; }
 };
 
 int main(int argc, char **argv) {
@@ -31,7 +31,8 @@ int main(int argc, char **argv) {
 
   start = clock();
 
-  std::sort(narr, narr + nelts, myless{});
+  myless comp;
+  std::sort(narr, narr + nelts, comp);
 
   fin = clock();
   printf("Elapsed: %lg seconds\n", (double)(fin - start) / CLOCKS_PER_SEC);
