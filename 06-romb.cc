@@ -23,6 +23,7 @@ struct IOFile : public InputFile, public OutputFile {
 
 int main() {
   IOFile f(11);
+  std::cout << f.a << std::endl;
   std::cout << f.InputFile::a << std::endl;
   std::cout << f.OutputFile::a << std::endl;
 }

@@ -7,8 +7,10 @@ struct A {
     a_ = rhs.a_;
     return *this;
   }
-  virtual ~A() {}
+  virtual ~A() = 0;
 };
+
+A::~A() {}
 
 struct B : public A {
   int b_;

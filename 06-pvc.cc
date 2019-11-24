@@ -1,8 +1,9 @@
 #include <iostream>
 
 struct Base {
-  Base() { unsafe(); }
-  void unsafe() { doIt(); } // PVC invocation
+  Base() { doIt(); }
+  //  Base() { unsafe(); }
+  //  void unsafe() { doIt(); } // PVC invocation
   virtual void doIt() = 0;
   virtual ~Base() {}
 };
