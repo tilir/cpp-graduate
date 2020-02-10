@@ -1,6 +1,7 @@
 // compile with: g++ --std=c++17 07-poluslo-fs.cc
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include <filesystem>
 #include <fstream>
 #include <string>
