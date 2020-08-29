@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------------
 //
-//  Example for point intersection
+//  Example for triangle intersection
 //  Originated from homework of D. Bushev
 //
 //----------------------------------------------------------------------------
