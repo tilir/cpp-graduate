@@ -56,7 +56,7 @@ struct line_t {
     c = -(p1.x * normal_vect.x + p1.y * normal_vect.y);
   }
 
-  enum area_t get_side_area(point_t const &point) const {
+  enum area_t get_side_area(const point_t &point) const {
     float side_offset = a * point.x + b * point.y + c;
     if (side_offset > 0.0 + flt_tolerance * inter_area_width)
       return LEFT_SIDE;
@@ -67,7 +67,7 @@ struct line_t {
     return RIGHT_SIDE;
   }
 
-  bool separates(point_t const &pnt1, point_t const &pnt2) const {
+  bool separates(const point_t &pnt1, const point_t &pnt2) const {
     enum area_t side1 = get_side_area(pnt1);
     enum area_t side2 = get_side_area(pnt2);
     if (side1 == INTER_SIDE || side2 == INTER_SIDE)
@@ -77,11 +77,13 @@ struct line_t {
 
   bool valid() const { return !(a != a || b != b || c != c); }
 
-  bool intersect(line_t const &another) const {
+  bool intersect(const line_t &another) const {
     return (std::abs(a * another.b - another.a * b) >= flt_tolerance);
   }
 
-  point_t point_of_intersect(line_t const &another) const {
+  point_t point_of_intersect(const line_t &another) const {
+    if (!intersect(another))
+      return point_t{};
     float det = (a * another.b - another.a * b);
     float det1 = ((-c) * another.b - (-another.c) * b);
     float det2 = (a * (-another.c) - another.a * (-c));
@@ -108,16 +110,13 @@ struct polygon_t {
     if (vertices.size() < 3)
       return 0;
 
-    float sum1 = 0;
-    float sum2 = 0;
-
-    for (int i = 0; i < vertices.size(); i++) {
+    float sum1 = 0, sum2 = 0;
+    for (size_t i = 0; i < vertices.size(); i++) {
       sum1 += vertices[i].x * vertices[(i + 1) % vertices.size()].y;
       sum2 -= vertices[(i + 1) % vertices.size()].x * vertices[i].y;
     }
 
     float result = (sum1 + sum2) / 2.0;
-
     if (result < 0.0)
       result = -result;
 
@@ -157,7 +156,7 @@ struct polygon_t {
 
   // tells if this polygon can be separate from another by any line holding a
   // side of this polygon
-  bool separable_from(polygon_t const &another) const {
+  bool separable_from(const polygon_t &another) const {
     for (size_t i = 0; i < vertices.size(); i++) {
       line_t div_line = get_side(i);
 
@@ -183,7 +182,7 @@ struct polygon_t {
 
   // return the point of polygon side intersection with line if it exists,
   // returns non-valid point otherwise
-  point_t side_line_intersect(int index, line_t const &line) const {
+  point_t side_line_intersect(int index, const line_t &line) const {
     point_t ret;
     size_t vsz = vertices.size();
     if (index < 0)
@@ -194,21 +193,18 @@ struct polygon_t {
 
     line_t poly_side = get_side(index);
 
-    if (poly_side.intersect(line))
-      ret = line.point_of_intersect(poly_side);
-
-    return ret;
+    return line.point_of_intersect(poly_side);
   }
 
   // returns the cutted polygon (which half of polygon will be cutted defines by
   // half_space_pt)
-  polygon_t cut_poly_by_line(line_t const &line,
-                             point_t const &half_space_pt) const {
+  polygon_t cut_poly_by_line(const line_t &line,
+                             const point_t &half_space_pt) const {
     enum area_t side = line.get_side_area(half_space_pt);
     assert(side != INTER_SIDE);
     polygon_t ret;
 
-    for (int i = 0; i < vertices.size(); i++) {
+    for (size_t i = 0; i < vertices.size(); i++) {
       enum area_t vert_side = line.get_side_area(vertices[i]);
 
       // half_space_pt side points and inter side points are both acceptable
@@ -216,40 +212,38 @@ struct polygon_t {
           !ret.holding(vertices[i]))
         ret.add(vertices[i]);
 
-      point_t intersect = side_line_intersect(i, line);
-      if (intersect.valid())
-        ret.add(intersect);
+      point_t pintersect = side_line_intersect(i, line);
+      if (pintersect.valid())
+        ret.add(pintersect);
     }
     return ret;
   }
 
   polygon_t get_poly_intersection(const polygon_t &rhs) const {
-    polygon_t another = rhs;
-    if (!intersect(another)) {
+    if (!intersect(rhs))
       return polygon_t{};
-    }
 
-    for (int i = 0; i < vertices.size(); i++) {
+    polygon_t another = rhs;
+    for (size_t i = 0; i < vertices.size(); i++) {
       line_t side = get_side(i);
       another =
           another.cut_poly_by_line(side, vertices[(i + 2) % vertices.size()]);
     }
-
     return another;
   }
 
-  bool holding(point_t const &vert) const {
-    for (int i = 0; i < vertices.size(); i++)
+  bool holding(const point_t &vert) const {
+    for (size_t i = 0; i < vertices.size(); i++)
       if (vert.equal(vertices[i]))
         return true;
     return false;
   }
 
-  bool intersect(polygon_t const &another) const {
+  bool intersect(const polygon_t &another) const {
     return !(separable_from(another) || another.separable_from(*this));
   }
 
-  void add(point_t const &vert) {
+  void add(const point_t &vert) {
     if (!holding(vert))
       vertices.push_back(vert);
   }
