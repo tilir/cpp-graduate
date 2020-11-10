@@ -1,0 +1,5 @@
+rm a.exe numgrammar.tab.cc numgrammar.tab.hh stack.hh lex.yy.cc
+D:\applications\win_flex_bison3-latest\win_bison.exe -d numgrammar.y
+D:\applications\win_flex_bison3-latest\win_flex.exe numgrammar.l
+g++ -isystem D:\applications\win_flex_bison3-latest numgrammar.tab.cc lex.yy.cc driver.cc
+a.exe < numtest.txt

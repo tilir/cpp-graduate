@@ -6,7 +6,7 @@ struct Base {
 };
 
 struct Derived : public Base {
-  int foo(int a = 42) override { return a; }
+  int foo(int a = 42) override { return 2 * a; }
 };
 
 int main() {

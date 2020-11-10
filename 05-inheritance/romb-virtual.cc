@@ -22,9 +22,14 @@ struct OutputFile : virtual public File {
 
 struct IOFile : public InputFile, public OutputFile {
   int d;
-  IOFile(int d) : File(d), InputFile(d * 5), OutputFile(d * 7) {
+  IOFile(int d) : File(d), InputFile(d * 5), OutputFile(d * 7), d{d} {
     std::cout << "IOFile ctor" << std::endl;
   }
+};
+
+struct IOFile2 : public IOFile {
+  int e;
+  IOFile2(int e) : IOFile(e), e(e) {}
 };
 
 int main() {
@@ -33,8 +38,12 @@ int main() {
   std::cout << f.OutputFile::a << std::endl;
   std::cout << f.a << std::endl;
 
-  InputFile g(13);
-  OutputFile h(17);
+#if 1
+  InputFile g(11);
+  OutputFile h(11);
   std::cout << g.a << std::endl;
   std::cout << h.a << std::endl;
+#endif
+
+  IOFile2 io2(11);
 }

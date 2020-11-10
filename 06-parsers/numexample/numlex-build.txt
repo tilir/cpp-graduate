@@ -1,0 +1,4 @@
+D:\applications\win_flex_bison-latest\win_flex.exe numlex.l
+g++ numlex.cc lex.yy.cc -isystem D:\applications\win_flex_bison-latest
+a.exe < numtest.inp
+rm lex.yy.cc a.exe

@@ -6,6 +6,10 @@ struct File {
   virtual ~File() {}
 };
 
+struct DFile : public File {
+  DFile() : File(5) {}
+};
+
 struct InputFile : virtual public File {
   int b;
   InputFile(int b) : File(b * 2), b{b} {
@@ -27,7 +31,8 @@ struct IOFile : public InputFile, public OutputFile {
   }
 };
 
-int main() {
+int main() {  
+  
   IOFile *piof = new IOFile{11};
   std::cout << std::hex << "piof = " << piof << ": " << std::dec;
   std::cout << piof->d << std::endl;
@@ -53,4 +58,7 @@ int main() {
   std::cout << piof->d << std::endl;
 
   delete piof;
+  
+  pof = new OutputFile{13};
+  InputFile &rif = dynamic_cast<InputFile &>(*pof); // ?  
 }
