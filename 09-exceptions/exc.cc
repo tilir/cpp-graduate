@@ -6,7 +6,7 @@ using std::endl;
 struct UnwShow {
   long t = 0xDEADBEEF;
   UnwShow() { cout << "ctor" << endl; }
-  ~UnwShow() { cout << "dtor" << endl; }
+  ~UnwShow() { std::cerr << "dtor" << endl; }
 };
 
 int foo(int n) {
@@ -21,8 +21,10 @@ int foo(int n) {
 }
 
 int main() {
+  foo(5);
+/*  
   try {
-    foo(5);
   } catch (...) {
   }
+  */
 }
