@@ -14,9 +14,9 @@
 //-----------------------------------------------------------------------------
 
 #include <algorithm>
-#include <iterator>
 #include <chrono>
 #include <iostream>
+#include <iterator>
 #include <list>
 #include <random>
 #include <vector>
@@ -38,13 +38,13 @@ OutputIt long_copy(InputIt first, InputIt last, OutputIt d_first) {
   return d_first;
 }
 
-template<bool Type, typename In, typename Out> struct CpSel {
+template <bool Type, typename In, typename Out> struct CpSel {
   static Out select(In begin, In end, Out out) {
-    return long_copy(begin,end,out);
+    return long_copy(begin, end, out);
   }
 };
 
-template<typename In, typename Out> struct CpSel<true,In,Out> {
+template <typename In, typename Out> struct CpSel<true, In, Out> {
   static Out select(In begin, In end, Out out) {
     using in_type = typename std::iterator_traits<In>::value_type;
     auto sz = (end - begin) * sizeof(in_type);
@@ -52,15 +52,16 @@ template<typename In, typename Out> struct CpSel<true,In,Out> {
   }
 };
 
-template<typename In, typename Out>
+template <typename In, typename Out>
 Out nonnaive_copy(In begin, In end, Out out) {
   using in_type = typename std::iterator_traits<In>::value_type;
   using out_type = typename std::iterator_traits<Out>::value_type;
-  enum { Sel = (std::is_pointer<In>::value &&
-                std::is_pointer<Out>::value &&
-                std::is_trivially_copyable<in_type>::value &&
-                std::is_trivially_copyable<out_type>::value &&
-                std::is_same<in_type, out_type>::value) };
+  enum {
+    Sel = (std::is_pointer<In>::value && std::is_pointer<Out>::value &&
+           std::is_trivially_copyable<in_type>::value &&
+           std::is_trivially_copyable<out_type>::value &&
+           std::is_same<in_type, out_type>::value)
+  };
   return CpSel<Sel, In, Out>::select(begin, end, out);
 }
 
@@ -89,26 +90,27 @@ int main(int argc, char **argv) {
             << std::endl;
 
   tstart = high_resolution_clock::now();
-#ifdef NONNAIVE  
+#ifdef NONNAIVE
   nonnaive_copy(arr, arr + nelts, arrcopy2);
 #else
   std::copy(arr, arr + nelts, arrcopy2);
   // basically the same for:
   // std::copy_n(arr, nelts, arrcopy2);
-#endif  
+#endif
   tfin = high_resolution_clock::now();
 
-#ifdef NAIVE  
+#ifdef NAIVE
   std::cout << "non-naive copy: "
 #else
   std::cout << "std copy: "
-#endif  
+#endif
             << duration_cast<milliseconds>(tfin - tstart).count() << std::endl;
 
   // sanity: do we have mismatch (we shall not)
   auto mism = std::mismatch(arrcopy, arrcopy + nelts, arrcopy2);
   if (mism.first != arrcopy + nelts || mism.second != arrcopy2 + nelts) {
-    std::cout << "mismatch: " << *mism.first << " vs " << *mism.second << std::endl;
+    std::cout << "mismatch: " << *mism.first << " vs " << *mism.second
+              << std::endl;
     std::cout << "at: " << mism.first - arrcopy << std::endl;
   }
 
