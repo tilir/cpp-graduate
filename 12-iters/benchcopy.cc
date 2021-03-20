@@ -65,26 +65,27 @@ int main(int argc, char **argv) {
             << std::endl;
 
   tstart = high_resolution_clock::now();
-#ifdef NAIVE  
+#ifdef NAIVE
   naive_copy(arr, arr + nelts, arrcopy2);
 #else
   std::copy(arr, arr + nelts, arrcopy2);
   // basically the same for:
   // std::copy_n(arr, nelts, arrcopy2);
-#endif  
+#endif
   tfin = high_resolution_clock::now();
 
-#ifdef NAIVE  
+#ifdef NAIVE
   std::cout << "naive copy: "
 #else
   std::cout << "std copy: "
-#endif  
+#endif
             << duration_cast<milliseconds>(tfin - tstart).count() << std::endl;
 
   // sanity: do we have mismatch (we shall not)
   auto mism = std::mismatch(arrcopy, arrcopy + nelts, arrcopy2);
   if (mism.first != arrcopy + nelts || mism.second != arrcopy2 + nelts) {
-    std::cout << "mismatch: " << *mism.first << " vs " << *mism.second << std::endl;
+    std::cout << "mismatch: " << *mism.first << " vs " << *mism.second
+              << std::endl;
     std::cout << "at: " << mism.first - arrcopy << std::endl;
   }
 
