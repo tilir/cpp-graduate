@@ -40,7 +40,7 @@ extern FILE *yyin;
 
 int yylex();
 int yyerror(char const *);
-void PrintError(char const *s, ...);
+void PrintError(char const *s);
 void BeginToken(char *, int *);
 
 // line number diagnostics

@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void ScanError(char const *, int lineno);
+void ScanError(char const *, char const *, int lineno);
 
 %}
 
@@ -23,6 +23,7 @@ int         [0-9]+
 
 %%
 "\n"        {  yyinlinePos = 0; }
+"\r"        {}
 {ws}        {  BeginToken(yytext, &yyinlinePos); }
 "if"        {
                BeginToken(yytext, &yyinlinePos);
@@ -95,13 +96,14 @@ int         [0-9]+
             }
 .           {  
                BeginToken(yytext, &yyinlinePos);
-               ScanError("Unexpected smth", yylineno);
+               ScanError("Unexpected smth", yytext, yylineno);
                return ILLEGAL;  
             }
 %%
 
 int yywrap() { return 1; }
 
-void ScanError(char const * s, int lineno) {
+void ScanError(char const * s, char const * yytext, int lineno) {
   fprintf(stdout, "Scanner error: %s in line %d\n", s, lineno);
+  fprintf(stdout, "%s\n", yytext);
 }

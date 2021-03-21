@@ -70,10 +70,7 @@ expr:         expr PLUS expr          { $$.treeNode = make_op($1.treeNode, Ops::
                                         $$.treeNode = currentScope->visible($1.name);
                                         if (!$$.treeNode) {
                                           YYLTYPE * info = &@1;
-                                          PrintError("Using undeclared variable! %s - Line %d:c%d to %d:c%d", 
-                                                      $1.name.c_str(),
-                                                      info->first_line, info->first_column,
-                                                      info->last_line, info->last_column);
+                                          PrintError("Using undeclared variable");
                                         }
                                       }
             | VALUE                   { $$.treeNode = make_value($1.value); }

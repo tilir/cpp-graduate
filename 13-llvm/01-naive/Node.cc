@@ -32,12 +32,13 @@ std::map<std::string, llvm::Value *> NamedValues;
 extern llvm::LLVMContext *currentContext;
 extern llvm::IRBuilder<> *currentBuilder;
 extern llvm::Function *currentFunction;
+extern llvm::Module *currentModule;
 
 static llvm::AllocaInst *CreateEntryBlockAlloca(const std::string &varname) {
 
   llvm::IRBuilder<> TmpB(&currentFunction->getEntryBlock(),
                          currentFunction->getEntryBlock().begin());
-  return TmpB.CreateAlloca(llvm::Type::getInt64Ty(*currentContext), 0,
+  return TmpB.CreateAlloca(llvm::Type::getInt32Ty(*currentContext), 0,
                            varname.c_str());
 }
 
@@ -50,7 +51,7 @@ IScope *create_scope() { return new Scope{nullptr}; }
 // NUMBER
 RType Value::calc() { return val; }
 llvm::Value *Value::codegen() {
-  return llvm::ConstantInt::get(llvm::Type::getInt64Ty(*currentContext), val);
+  return llvm::ConstantInt::get(llvm::Type::getInt32Ty(*currentContext), val);
 }
 void Value::dump() const { std::cout << "Node Value: " << val << std::endl; }
 
@@ -96,8 +97,12 @@ INode *Scope::access(std::string const &var_name) {
     return t;
 
   INode *d = new Decl{var_name};
+
+#if (CODEGEN == 1)
   auto *Alloca = CreateEntryBlockAlloca(var_name);
   NamedValues[var_name] = Alloca;
+#endif
+
   globalTable.add(this, var_name, d);
   return d;
 }
@@ -143,6 +148,7 @@ RType Op::calc() {
     return val;
   case Ops::StdOut:
     std::cout << right->calc() << std::endl;
+    break;
   case Ops::StdIn:
     std::cin >> val;
     return val;
@@ -185,12 +191,12 @@ llvm::Value *Op::codegen() {
   case Ops::Plus:
     if (LeftV == nullptr)
       LeftV =
-          llvm::ConstantInt::get(llvm::Type::getInt64Ty(*currentContext), 0);
+          llvm::ConstantInt::get(llvm::Type::getInt32Ty(*currentContext), 0);
     return currentBuilder->CreateAdd(LeftV, RightV);
   case Ops::Minus:
     if (LeftV == nullptr)
       LeftV =
-          llvm::ConstantInt::get(llvm::Type::getInt64Ty(*currentContext), 0);
+          llvm::ConstantInt::get(llvm::Type::getInt32Ty(*currentContext), 0);
     return currentBuilder->CreateSub(LeftV, RightV);
   case Ops::Greater:
     return currentBuilder->CreateICmpSGT(LeftV, RightV);
@@ -202,12 +208,18 @@ llvm::Value *Op::codegen() {
     return currentBuilder->CreateICmpSLE(LeftV, RightV);
   case Ops::Assign:
     return static_cast<Decl *>(left)->assign(RightV);
-  case Ops::StdOut:
-    // TODO: print is separate thing
-    break;
-  case Ops::StdIn:
-    // TODO: qst is separate thing
-    break;
+  case Ops::StdOut: {
+    auto *CalleeF = currentModule->getFunction("__pcl_print");
+    assert(CalleeF && "Driver shall create decl for __pcl_print");
+    assert(RightV && "Print required non-null right arg");
+    llvm::Value *ArgsV[] = {RightV};
+    return currentBuilder->CreateCall(CalleeF, ArgsV);
+  }
+  case Ops::StdIn: {
+    auto *CalleeF = currentModule->getFunction("__pcl_scan");
+    assert(CalleeF && "Driver shall create decl for __pcl_scan");
+    return currentBuilder->CreateCall(CalleeF);
+  }
   case Ops::Equal:
     return currentBuilder->CreateICmpEQ(LeftV, RightV);
   case Ops::NotEqual:
