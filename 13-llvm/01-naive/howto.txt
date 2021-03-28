@@ -1,0 +1,16 @@
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Debug ..
+make -j12
+
+# You will get here targets ParaCL and ParaCLi
+
+# compile path:
+./ParaCL ../tests/simplest/addsub.pcl
+clang++ ../../pcllib.cc addsub.pcl.ll
+./a.out
+
+# interp path:
+./ParaCL ../tests/simplest/addsub.pcl
+
+# both will wait one number from keyboard
