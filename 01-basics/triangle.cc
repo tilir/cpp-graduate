@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
 //
-// Source code for MIPT course on informatics//
+// Source code for MIPT ILab
 // Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
 // Licensed after GNU GPL v3
 //
