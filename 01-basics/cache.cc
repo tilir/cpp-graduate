@@ -1,4 +1,10 @@
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT course on informatics//
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
 //
 //  Example for LRU cache in C++
 //
@@ -11,28 +17,26 @@
 #include <unordered_map>
 #include <vector>
 
-struct cache_t {
+template <typename T, typename KeyT = int> struct cache_t {
   size_t sz_;
-  std::list<int> cache_;
+  std::list<T> cache_;
 
-  using ListIt = std::list<int>::iterator;
-  std::unordered_map<int, ListIt> hash_;
+  using ListIt = typename std::list<T>::iterator;
+  std::unordered_map<KeyT, ListIt> hash_;
 
   cache_t(size_t sz) : sz_(sz) {}
 
-  bool full() const {
-    return (cache_.size() == sz_);
-  }
+  bool full() const { return (cache_.size() == sz_); }
 
-  bool lookup(int elem) {
-    auto hit = hash_.find(elem);
+  template <typename F> bool lookup_update(KeyT key, F slow_get_page) {
+    auto hit = hash_.find(key);
     if (hit == hash_.end()) {
       if (full()) {
         hash_.erase(cache_.back());
         cache_.pop_back();
       }
-      cache_.push_front(elem);
-      hash_[elem] = cache_.begin();
+      cache_.push_front(slow_get_page(key));
+      hash_[key] = cache_.begin();
       return false;
     }
 
@@ -43,19 +47,23 @@ struct cache_t {
   }
 };
 
+// slow get page imitation
+int slow_get_page_int(int key) { return key; }
+
 int main() {
   int hits = 0;
-  int n, m;
+  int n;
+  size_t m;
 
   std::cin >> m >> n;
   assert(std::cin.good());
-  cache_t c{m};
+  cache_t<int> c{m};
 
   for (int i = 0; i < n; ++i) {
-    int q;    
+    int q;
     std::cin >> q;
     assert(std::cin.good());
-    if (c.lookup(q))
+    if (c.lookup_update(q, slow_get_page_int))
       hits += 1;
   }
 

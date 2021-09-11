@@ -1,9 +1,40 @@
-struct S {
-  S *retme() { return this; }
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT course on informatics//
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+// This demo: essence of this pointer
+// compile with: g++ -O1 -g0 -masm=intel -S this.cc
+//
+//-----------------------------------------------------------------------------
+
+#include <iostream>
+
+#define NOINLINE __attribute__((noinline))
+
+struct Point {
+  double x, y;
+  void swapxy() NOINLINE {
+    double tmp = x;
+    x = y;
+    y = tmp;
+  }
 };
 
-S *retfirst(S *ps) { return ps; }
+void standalone_swapxy(struct Point *p) NOINLINE;
 
-S g;
+void standalone_swapxy(struct Point *p) {
+  double tmp = p->x;
+  p->x = p->y;
+  p->y = tmp;
+}
 
-S *foo() { return g.retme(); }
+int main() {
+  Point p{1, 2};
+  p.swapxy();
+  standalone_swapxy(&p);
+  std::cout << p.x << " " << p.y << std::endl;
+}

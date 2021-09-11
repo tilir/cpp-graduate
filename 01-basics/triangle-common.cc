@@ -1,7 +1,17 @@
-#include <cmath>
-#include <cstdio>
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT course on informatics//
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+// Triangles demo: abstracting with templates
+//
+//-----------------------------------------------------------------------------
 
-using namespace std; // never do like this
+#include <cmath>
+#include <iostream>
 
 template <typename T> struct Point { double x, y; };
 
@@ -15,10 +25,10 @@ template <typename U> struct Triangle {
 };
 
 int main() {
-  struct Triangle t;
-  t.pts[0] = Point{1.0, 1.0};
-  t.pts[1] = Point{3.0, 3.0};
-  t.pts[2] = Point{1.0, 2.0};
-  double a = t.square();
-  printf("%lf\n", a);
+  struct Triangle<double> t;
+  t.pts[0] = {1.0, 1.0};
+  t.pts[1] = {3.0, 3.0};
+  t.pts[2] = {1.0, 2.0};
+  double square = t.double_square() / 2.0;
+  std::cout << square << std::endl;
 }

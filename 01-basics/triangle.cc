@@ -1,7 +1,17 @@
-#include <cmath>
-#include <cstdio>
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT course on informatics//
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+// Triangles demo: grouping together data and processing
+//
+//-----------------------------------------------------------------------------
 
-using namespace std; // never do like this
+#include <cmath>
+#include <iostream>
 
 struct Point {
   double x, y;
@@ -13,7 +23,7 @@ struct Triangle {
     double sq = pts[0].x * (pts[1].y - pts[2].y) +
                 pts[1].x * (pts[2].y - pts[0].y) +
                 pts[2].x * (pts[0].y - pts[1].y);
-    return abs(sq) / 2.0;
+    return std::abs(sq) / 2.0;
   }
 };
 
@@ -22,6 +32,6 @@ int main() {
   t.pts[0] = Point{1.0, 1.0};
   t.pts[1] = Point{3.0, 3.0};
   t.pts[2] = Point{1.0, 2.0};
-  double a = t.square();
-  printf("%lf\n", a);
+  double square = t.square();
+  std::cout << square << std::endl;
 }

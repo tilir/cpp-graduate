@@ -1,3 +1,17 @@
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT course on informatics//
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+// Qsort bench: C++ style std::sort, how fast it is?
+// g++ -O2 qsortbench.cc
+// ./a.out 50000000
+//
+//-----------------------------------------------------------------------------
+
 #include <algorithm>
 #include <cassert>
 #include <cstdio>
