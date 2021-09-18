@@ -1,7 +1,13 @@
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT ILab
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
 //----------------------------------------------------------------------------
 //
 //  Example for triangle intersection
-//  Originated from homework of D. Bushev
+//  Originated from homework of Dmitry Bushev
 //
 //----------------------------------------------------------------------------
 

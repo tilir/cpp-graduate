@@ -1,6 +1,20 @@
-#include "lingeo.hpp"
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT ILab
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+//  Example: triangle intersection, driver program
+//
+//----------------------------------------------------------------------------
+
+#include <cassert>
 #include <iostream>
 #include <vector>
+
+#include "lingeo.hpp"
 
 polygon_t input_triangle() {
   std::vector<point_t> verts(3);
@@ -9,6 +23,7 @@ polygon_t input_triangle() {
     std::cin >> temp.x;
     std::cin >> temp.y;
     verts[i] = temp;
+    assert(std::cin.good());
   }
   polygon_t ret{verts};
   return ret;
