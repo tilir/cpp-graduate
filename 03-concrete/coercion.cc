@@ -1,3 +1,16 @@
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT ILab
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+// Coercion demo: coercion is not copy. No output in second "Copy:" block.
+// compile with: g++ coercion.cc
+//
+//-----------------------------------------------------------------------------
+
 #include <iostream>
 
 template <typename T> struct Copyable {

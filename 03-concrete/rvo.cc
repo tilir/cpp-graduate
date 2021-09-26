@@ -1,3 +1,17 @@
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT ILab
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+// RVO demo
+// compile with: g++ rvo.cc
+// compile with: g++ -fno-elide-constructors rvo.cc
+//
+//-----------------------------------------------------------------------------
+
 #include <iostream>
 
 using std::cout;
