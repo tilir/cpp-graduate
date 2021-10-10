@@ -20,6 +20,7 @@ public:
   ~scoped_ptr() { delete ptr_; }
   scoped_ptr(const scoped_ptr &rhs) : ptr_{rhs.ptr_} {}
   T *operator->() { return ptr_; }
+  const T *operator->() const { return ptr_; }
 };
 
 struct X {
@@ -29,4 +30,7 @@ struct X {
 int main() {
   scoped_ptr<X> pt{new X{2, 3}};
   std::cout << pt->a << std::endl;
+
+  const scoped_ptr<X> ptc{new X{2, 3}};
+  std::cout << ptc->a << std::endl;
 }
