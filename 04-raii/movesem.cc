@@ -6,27 +6,19 @@
 //
 //-----------------------------------------------------------------------------
 //
-//  Example of drill-down behavior of -> operator
+//  Example of move semantics
 //
 //----------------------------------------------------------------------------
 
 #include <iostream>
 
-template <typename T> class scoped_ptr {
-  T *ptr_;
-
-public:
-  scoped_ptr(T *ptr) : ptr_{ptr} {}
-  ~scoped_ptr() { delete ptr_; }
-  scoped_ptr(const scoped_ptr &rhs) : ptr_{rhs.ptr_} {}
-  T *operator->() { return ptr_; }
-};
-
-struct X {
-  int a, b;
-};
-
 int main() {
-  scoped_ptr<X> pt{new X{2, 3}};
-  std::cout << pt->a << std::endl;
+  int x = 4;
+  int &&y = x + 1;
+  std::cout << &x << " " << &y << std::endl;
+
+  int &&z = std::move(x);
+  z = z + 1;
+  y = y + 1;
+  std::cout << x << " " << y << std::endl;
 }
