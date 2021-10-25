@@ -6,29 +6,23 @@
 //
 //-----------------------------------------------------------------------------
 //
-//  operator- for everything
+//  Strange implicit cast behavior
 //
 //----------------------------------------------------------------------------
 
 #include <iostream>
+#include <string>
 
-#ifdef CERR
-int operator-(int x) {
-  std::cout << "MINUS!" << std::endl;
-  return x;
-}
-#endif
+struct S {
+  S(std::string) {}
+  S(std::wstring) {}
+};
 
-template <typename T> T operator-(T x) {
-  std::cout << "MINUS!" << std::endl;
-  return x;
-}
+bool operator==(S lhs, S rhs) { return true; }
 
 int main() {
-  int a = 42;
-  std::cout << -a << std::endl;
-
-#ifdef CERR2
-  std::cout << operator-(a) << std::endl;
-#endif
+  std::string s = "foo";
+  std::wstring t = L"bar";
+  if (s == t)
+    std::cout << "WAT?\n";
 }

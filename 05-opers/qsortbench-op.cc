@@ -43,8 +43,8 @@ int main(int argc, char **argv) {
 
   start = clock();
 
-  myless comp;
-  std::sort(narr, narr + nelts, comp);
+  // myless comp;
+  std::sort(narr, narr + nelts, [](auto lhs, auto rhs) { return lhs > rhs; });
 
   fin = clock();
   printf("Elapsed: %lg seconds\n", (double)(fin - start) / CLOCKS_PER_SEC);
