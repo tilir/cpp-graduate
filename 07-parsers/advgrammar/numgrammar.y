@@ -22,9 +22,9 @@
 
 %code requires
 {
-#include <iostream>
+#include <algorithm>
 #include <string>
-#include <utility>
+#include <vector>
 
 // forward decl of argument to parser
 namespace yy { class NumDriver; }
@@ -50,8 +50,9 @@ parser::token_type yylex(parser::semantic_type* yylval,
 ;
 
 %token <int> NUMBER
-%nterm <int> equals
-%nterm <int> expr
+%nterm <std::vector<int>> expr
+%nterm <std::pair<std::vector<int>, std::vector<int>>> equals
+%nterm <std::vector<std::pair<std::vector<int>, std::vector<int>>>> eqlist
 
 %left '+' '-'
 
@@ -59,24 +60,19 @@ parser::token_type yylex(parser::semantic_type* yylval,
 
 %%
 
-program: eqlist
+program: eqlist               { driver->insert($1); }
 ;
 
-eqlist: equals SCOLON eqlist
-      | %empty
+eqlist: equals SCOLON eqlist  { $$ = $3; $$.push_back($1); }
+      | equals SCOLON         { $$.push_back($1);          }
 ;
 
-equals: expr EQUAL expr       { 
-                                $$ = ($1 == $3); 
-                                std::cout << "Checking: " << $1 << " vs " << $3 
-                                          << "; Result: " << $$
-                                          << std::endl; 
-                              }
+equals: expr EQUAL expr       { $$ = std::make_pair($1, $3); }
 ;
 
-expr: expr PLUS NUMBER        { $$ = $1 + $3; }
-    | expr MINUS NUMBER       { $$ = $1 - $3; }
-    | NUMBER                  { $$ = $1; }
+expr: NUMBER                  { $$.push_back($1); }
+    | expr PLUS NUMBER        { $$ = $1; $$.push_back($3); }
+    | expr MINUS NUMBER       { $$ = $1; $$.push_back(-$3); }
 ;
 
 %%
