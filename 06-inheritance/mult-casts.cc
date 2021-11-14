@@ -1,3 +1,15 @@
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT ILab
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+//  Static casts with statically calculated offsets
+//
+//----------------------------------------------------------------------------
+
 #include <iostream>
 
 struct Filler {
