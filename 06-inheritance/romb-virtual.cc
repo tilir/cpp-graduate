@@ -39,10 +39,12 @@ struct IOFile : public InputFile, public OutputFile {
   }
 };
 
+#ifdef IO2
 struct IOFile2 : public IOFile {
   int e;
   IOFile2(int e) : IOFile(e), e(e) {}
 };
+#endif
 
 int main() {
   IOFile f(11);
@@ -50,12 +52,14 @@ int main() {
   std::cout << f.OutputFile::a << std::endl;
   std::cout << f.a << std::endl;
 
-#if 1
+#ifdef IO1
   InputFile g(11);
   OutputFile h(11);
   std::cout << g.a << std::endl;
   std::cout << h.a << std::endl;
 #endif
 
+#ifdef IO2
   IOFile2 io2(11);
+#endif
 }
