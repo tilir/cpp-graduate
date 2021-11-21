@@ -10,7 +10,7 @@
  *  EQL -> EQ; EQL | empty
  *  EQ -> E = E
  *  E -> number A
- *  A -> + number A | - number A
+ *  A -> + number A | - number A | empty
  *
  * ------------------------------------------------------------------------- */
 
