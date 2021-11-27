@@ -1,3 +1,17 @@
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT ILab
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+//  Third attempt: rather good implementation
+//  try: g++ myvec-3.cc  -O0 -g
+//  for both: valgrind ./a.out
+//
+//----------------------------------------------------------------------------
+
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
@@ -17,26 +31,35 @@ template <typename FwdIter> void destroy(FwdIter first, FwdIter last) {
 }
 
 template <typename T> struct MyVectorBuf {
-  MyVectorBuf(const MyVectorBuf &);            // = delete;
-  MyVectorBuf &operator=(const MyVectorBuf &); // = delete;
 protected:
   T *arr_;
-  size_t size_, used_;
+  size_t size_, used_ = 0;
+
+protected:
+  MyVectorBuf(const MyVectorBuf &) = delete;
+  MyVectorBuf &operator=(const MyVectorBuf &) = delete;
+  MyVectorBuf(MyVectorBuf &&rhs) noexcept
+      : arr_(rhs.arr_), size_(rhs.size_), used_(rhs.used_) {
+    rhs.arr_ = nullptr;
+    rhs.size_ = 0;
+    rhs.used_ = 0;
+  }
+
+  MyVectorBuf &operator=(MyVectorBuf &&rhs) noexcept {
+    std::swap(arr_, rhs.arr_);
+    std::swap(size_, rhs.size_);
+    std::swap(used_, rhs.used_);
+    return *this;
+  }
 
   MyVectorBuf(size_t sz = 0)
       : arr_((sz == 0) ? NULL
                        : static_cast<T *>(::operator new(sizeof(T) * sz))),
-        size_(sz), used_(0) {}
+        size_(sz) {}
 
   ~MyVectorBuf() {
     destroy(arr_, arr_ + used_);
     ::operator delete(arr_);
-  }
-
-  void swap(MyVectorBuf &rhs) /* noexcept */ {
-    std::swap(arr_, rhs.arr_);
-    std::swap(size_, rhs.size_);
-    std::swap(used_, rhs.used_);
   }
 };
 
@@ -47,6 +70,9 @@ template <typename T> struct MyVector : private MyVectorBuf<T> {
 
   MyVector(size_t sz) : MyVectorBuf<T>(sz) {}
 
+  MyVector(MyVector &&rhs) = default;
+  MyVector &operator=(MyVector &&rhs) = default;
+
   MyVector(const MyVector &rhs) : MyVectorBuf<T>(rhs.used_) {
     while (used_ < rhs.used_) {
       construct(arr_ + used_, rhs.arr_[used_]);
@@ -56,7 +82,7 @@ template <typename T> struct MyVector : private MyVectorBuf<T> {
 
   MyVector &operator=(const MyVector &rhs) {
     MyVector tmp(rhs);
-    this->swap(tmp);
+    std::swap(*this, tmp);
     return *this;
   }
 
@@ -80,7 +106,7 @@ template <typename T> struct MyVector : private MyVectorBuf<T> {
       while (tmp.size() < used_)
         tmp.push(arr_[tmp.size()]);
       tmp.push(t);
-      this->swap(tmp);
+      std::swap(*this, tmp);
     } else {
       construct(arr_ + used_, t);
       used_ += 1;
@@ -91,46 +117,42 @@ template <typename T> struct MyVector : private MyVectorBuf<T> {
   size_t capacity() const { return size_; }
 };
 
-class RefBind {
-  static int g;
-  int &ref;
+int control = 5;
 
-public:
-  RefBind() : ref(g) {}
-  RefBind(int x) : ref(x) {}
-  int get() const { return ref; }
+struct Controllable {
+  Controllable() {}
+  Controllable(Controllable &&) {}
+  Controllable &operator=(Controllable &&rhs) { return *this; }
+  Controllable(const Controllable &) {
+    if (control == 0) {
+      control = 5;
+      throw std::bad_alloc{};
+    }
+    control -= 1;
+  }
+  Controllable &operator=(const Controllable &rhs) {
+    Controllable tmp(rhs);
+    std::swap(*this, tmp);
+    return *this;
+  }
+
+  ~Controllable() {}
 };
 
-int RefBind::g = 0;
+void test1() {
+  Controllable c1, c2, c3;
+  MyVector<Controllable> vv1(5);
+  vv1.push(c1);
+  vv1.push(c2);
+  vv1.push(c3);
+  MyVector<Controllable> vv2(vv1); // oops
+  std::cout << vv2.size() << std::endl;
+}
 
 int main() {
-  MyVector<int> v(10);
-  for (int i = 0; i < 30; ++i)
-    v.push(i);
-  MyVector<int> v2(v);
-  MyVector<int> v3(10);
-  for (int i = 0; i < 5; ++i)
-    v.pop();
-  v3 = v;
-  for (int i = 0; i < 5; ++i)
-    v.pop();
-
-  cout << v.size() << endl;
-  cout << v2.size() << endl;
-  cout << v3.size() << endl;
-
-#if VECVEC
-  MyVector<MyVector<int>> vv(1);
-  vv.push(v);
-  vv.push(v2);
-  vv.push(v3);
-  cout << vv.size() << endl;
-#endif
-
-#if VECREF
-  MyVector<RefBind> vr(10);
-  vr.push(10);
-  MyVector<RefBind> vr2(vr);
-  cout << vr2.size() << endl;
-#endif
+  try {
+    test1();
+  } catch (std::bad_alloc &) {
+    std::cout << "Exception catched\n";
+  }
 }

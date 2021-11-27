@@ -1,12 +1,22 @@
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT ILab
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+//  First naive implementation: not exception safe
+//  try: g++ myvec-1.cc  -O0 -g -DEXTEND_CONTROL
+//  try: g++ myvec-1.cc  -O0 -g
+//  for both: valgrind ./a.out
+//
+//----------------------------------------------------------------------------
+
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
 #include <utility>
-
-using std::cout;
-using std::endl;
-using std::runtime_error;
-using std::swap;
 
 template <typename T> class MyVector {
   T *arr_ = nullptr;
@@ -21,17 +31,17 @@ public:
       arr_[idx] = rhs.arr_[idx];
   }
 
-  MyVector(MyVector &&rhs)
+  MyVector(MyVector &&rhs) noexcept
       : arr_(rhs.arr_), size_(rhs.size_), used_(rhs.used_) {
     rhs.arr_ = nullptr;
     rhs.size_ = 0;
     rhs.used_ = 0;
   }
 
-  MyVector &operator=(MyVector &&rhs) {
-    swap(arr_, rhs.arr_);
-    swap(size_, rhs.size_);
-    swap(used_, rhs.used_);
+  MyVector &operator=(MyVector &&rhs) noexcept {
+    std::swap(arr_, rhs.arr_);
+    std::swap(size_, rhs.size_);
+    std::swap(used_, rhs.used_);
   }
 
   MyVector &operator=(const MyVector &rhs) {
@@ -46,9 +56,11 @@ public:
     return *this;
   }
 
+  ~MyVector() { delete[] arr_; }
+
   T pop() {
     if (used_ < 1)
-      throw runtime_error("Vector is empty");
+      throw std::runtime_error("Vector is empty");
     used_ -= 1;
     return arr_[used_];
   }
@@ -73,45 +85,46 @@ public:
   size_t capacity() const { return size_; }
 };
 
-class RefBind {
-  static int g;
-  int &ref;
+#ifdef EXTEND_CONTROL
+int control = 100;
+#else
+int control = 5;
+#endif
 
-public:
-  RefBind() : ref(g) {}
-  RefBind(int x) : ref(x) {}
-  int get() const { return ref; }
+struct Controllable {
+  Controllable() {}
+  Controllable(Controllable &&) {}
+  Controllable &operator=(Controllable &&rhs) { return *this; }
+  Controllable(const Controllable &) {
+    if (control == 0) {
+      control = 5;
+      throw std::bad_alloc{};
+    }
+    control -= 1;
+  }
+  Controllable &operator=(const Controllable &rhs) {
+    Controllable tmp(rhs);
+    std::swap(*this, tmp);
+    return *this;
+  }
+
+  ~Controllable() {}
 };
 
-int RefBind::g = 0;
+void test1() {
+  Controllable c1, c2, c3;
+  MyVector<Controllable> vv1(5);
+  vv1.push(c1);
+  vv1.push(c2);
+  vv1.push(c3);
+  MyVector<Controllable> vv2(vv1); // oops
+  std::cout << vv2.size() << std::endl;
+}
 
 int main() {
-  MyVector<int> v(10);
-  for (int i = 0; i < 30; ++i)
-    v.push(i);
-  MyVector<int> v2(v);
-  MyVector<int> v3(10);
-  for (int i = 0; i < 5; ++i)
-    v.pop();
-  v3 = v;
-  for (int i = 0; i < 5; ++i)
-    v.pop();
-
-  cout << v.size() << endl;
-  cout << v2.size() << endl;
-  cout << v3.size() << endl;
-
-#if VECVEC
-  MyVector<MyVector<int>> vv(1);
-  vv.push(v);
-  vv.push(v2);
-  vv.push(v3);
-  cout << vv.size() << endl;
-#endif
-
-#if VECREF
-  MyVector<RefBind> vr(10);
-  vr.push(10);
-  MyVector<RefBind> vr2(vr);
-#endif
+  try {
+    test1();
+  } catch (std::bad_alloc &) {
+    std::cout << "Exception catched\n";
+  }
 }
