@@ -20,10 +20,10 @@
 
 template <typename T> class MyVector {
   T *arr_ = nullptr;
-  size_t size_, used_;
+  size_t size_, used_ = 0;
 
 public:
-  MyVector(size_t sz) : arr_(new T[sz]), size_(sz), used_(0) {}
+  explicit MyVector(size_t sz = 0) : arr_(new T[sz]), size_(sz) {}
 
   MyVector(const MyVector &rhs)
       : arr_(new T[rhs.size_]), size_(rhs.size_), used_(rhs.used_) {
@@ -68,6 +68,7 @@ public:
   void push(const T &t) {
     assert(used_ <= size_);
     if (used_ == size_) {
+      std::cout << "Realloc\n";
       size_t newsz = size_ * 2 + 1;
       T *newarr = new T[newsz];
       for (size_t idx = 0; idx != size_; ++idx)
@@ -96,6 +97,7 @@ struct Controllable {
   Controllable(Controllable &&) {}
   Controllable &operator=(Controllable &&rhs) { return *this; }
   Controllable(const Controllable &) {
+    std::cout << "Copying\n";
     if (control == 0) {
       control = 5;
       throw std::bad_alloc{};
@@ -113,10 +115,11 @@ struct Controllable {
 
 void test1() {
   Controllable c1, c2, c3;
-  MyVector<Controllable> vv1(5);
+  MyVector<Controllable> vv1(1);
   vv1.push(c1);
   vv1.push(c2);
   vv1.push(c3);
+  std::cout << "Invoke copy ctor\n";
   MyVector<Controllable> vv2(vv1); // oops
   std::cout << vv2.size() << std::endl;
 }
