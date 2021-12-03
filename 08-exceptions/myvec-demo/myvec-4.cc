@@ -17,9 +17,9 @@
 #include <stdexcept>
 #include <utility>
 
-using std::cout;
-using std::endl;
-using std::runtime_error;
+#include "controllable.hh"
+
+int Controllable::control = 5;
 
 template <typename T> void construct(T *p, const T &rhs) { new (p) T(rhs); }
 template <typename T> void construct(T *p, T &&rhs) {
@@ -29,8 +29,8 @@ template <typename T> void construct(T *p, T &&rhs) {
 template <class T> void destroy(T *p) { p->~T(); }
 
 template <typename FwdIter> void destroy(FwdIter first, FwdIter last) {
-  while (first++ != last)
-    destroy(&*first);
+  while (first != last)
+    destroy(&*first++);
 }
 
 template <typename T> struct MyVectorBuf {
@@ -56,7 +56,7 @@ protected:
   }
 
   MyVectorBuf(size_t sz = 0)
-      : arr_((sz == 0) ? NULL
+      : arr_((sz == 0) ? nullptr
                        : static_cast<T *>(::operator new(sizeof(T) * sz))),
         size_(sz) {}
 
@@ -91,13 +91,13 @@ template <typename T> struct MyVector : private MyVectorBuf<T> {
 
   T top() const {
     if (used_ < 1)
-      throw runtime_error("Vector is empty");
+      throw std::runtime_error("Vector is empty");
     return arr_[used_ - 1];
   }
 
   void pop() {
     if (used_ < 1)
-      throw runtime_error("Vector is empty");
+      throw std::runtime_error("Vector is empty");
     used_ -= 1;
     destroy(arr_ + used_);
   }
@@ -114,8 +114,8 @@ template <typename T> struct MyVector : private MyVectorBuf<T> {
     if (used_ == size_) {
       std::cout << "Realloc\n";
       MyVector tmp(size_ * 2 + 1);
-      while (tmp.size() < used_)
-        tmp.push(std::move(arr_[tmp.size()]));
+      while (tmp.used_ < used_)
+        tmp.push(std::move(arr_[tmp.used_]));
       tmp.push(std::move(t));
       std::swap(*this, tmp);
     } else {
@@ -126,29 +126,6 @@ template <typename T> struct MyVector : private MyVectorBuf<T> {
 
   size_t size() const { return used_; }
   size_t capacity() const { return size_; }
-};
-
-int control = 5;
-
-struct Controllable {
-  Controllable() {}
-  Controllable(Controllable &&) noexcept {}
-  Controllable &operator=(Controllable &&rhs) noexcept { return *this; }
-  Controllable(const Controllable &) {
-    std::cout << "Copying\n";
-    if (control == 0) {
-      control = 5;
-      throw std::bad_alloc{};
-    }
-    control -= 1;
-  }
-  Controllable &operator=(const Controllable &rhs) {
-    Controllable tmp(rhs);
-    std::swap(*this, tmp);
-    return *this;
-  }
-
-  ~Controllable() {}
 };
 
 void test1() {

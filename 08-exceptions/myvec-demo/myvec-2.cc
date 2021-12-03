@@ -17,6 +17,10 @@
 #include <stdexcept>
 #include <utility>
 
+#include "controllable.hh"
+
+int Controllable::control = 5;
+
 template <typename T>
 T *safe_copy(const T *src, size_t srcsize, size_t dstsize) {
   assert(srcsize <= dstsize);
@@ -39,7 +43,7 @@ public:
   explicit MyVector(size_t sz = 0) : arr_(new T[sz]), size_(sz) {}
 
   MyVector(const MyVector &rhs) {
-    arr_ = safe_copy(rhs.arr_, rhs.size_, rhs.size_);
+    arr_ = safe_copy(rhs.arr_, rhs.used_, rhs.used_);
     size_ = rhs.size_;
     used_ = rhs.used_;
   }
@@ -95,29 +99,6 @@ public:
 
   size_t size() const { return used_; }
   size_t capacity() const { return size_; }
-};
-
-int control = 5;
-
-struct Controllable {
-  Controllable() {}
-  Controllable(Controllable &&) {}
-  Controllable &operator=(Controllable &&rhs) { return *this; }
-  Controllable(const Controllable &) {
-    std::cout << "Copying\n";
-    if (control == 0) {
-      control = 5;
-      throw std::bad_alloc{};
-    }
-    control -= 1;
-  }
-  Controllable &operator=(const Controllable &rhs) {
-    Controllable tmp(rhs);
-    std::swap(*this, tmp);
-    return *this;
-  }
-
-  ~Controllable() {}
 };
 
 void test1() {

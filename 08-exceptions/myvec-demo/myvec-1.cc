@@ -18,6 +18,10 @@
 #include <stdexcept>
 #include <utility>
 
+#include "controllable.hh"
+
+int Controllable::control = 5;
+
 template <typename T> class MyVector {
   T *arr_ = nullptr;
   size_t size_, used_ = 0;
@@ -84,33 +88,6 @@ public:
 
   size_t size() const { return used_; }
   size_t capacity() const { return size_; }
-};
-
-#ifdef EXTEND_CONTROL
-int control = 100;
-#else
-int control = 5;
-#endif
-
-struct Controllable {
-  Controllable() {}
-  Controllable(Controllable &&) {}
-  Controllable &operator=(Controllable &&rhs) { return *this; }
-  Controllable(const Controllable &) {
-    std::cout << "Copying\n";
-    if (control == 0) {
-      control = 5;
-      throw std::bad_alloc{};
-    }
-    control -= 1;
-  }
-  Controllable &operator=(const Controllable &rhs) {
-    Controllable tmp(rhs);
-    std::swap(*this, tmp);
-    return *this;
-  }
-
-  ~Controllable() {}
 };
 
 void test1() {
