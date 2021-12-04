@@ -51,8 +51,7 @@ class Drawable {
     virtual void draw_(Screen &, size_t) const = 0;
   };
 
-  template <typename T> 
-  struct DrawableObject final : IDrawable {
+  template <typename T> struct DrawableObject final : IDrawable {
     T data_;
     DrawableObject(T x) : data_(std::move(x)) {}
     std::unique_ptr<IDrawable> copy_() const override {
