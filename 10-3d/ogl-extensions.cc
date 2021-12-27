@@ -19,8 +19,12 @@
 #include <memory>
 #include <stdexcept>
 
-#include <GLFW/glfw3.h>
+// clang-format off
+// this headers shall be in this position
 #include <glad/glad.h>
+// clang-format on
+
+#include <GLFW/glfw3.h>
 
 // initial window sizes
 constexpr int SZX = 600;
@@ -48,22 +52,22 @@ GLFWwindow *initialize_window() {
   assert(Window); // error callback shall throw otherwise
   glfwMakeContextCurrent(Window);
   glfwSetFramebufferSizeCallback(Window, framebuffer_size_callback);
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+  if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
     throw glfw_error("Failed to initialize GLAD");
   return Window;
 }
 
 // vertices to render
 GLfloat Vertices[] = {
-    // positions        // colors
-    -0.5f, 0.5f,  0.0f, 1.0f, 1.0f, 1.0f, // top left
-    0.5f,  0.5f,  0.0f, 1.0f, 1.0f, 1.0f, // top right
-    0.5f,  -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, // bottom right
-    -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 1.0f, // bottom left
+    // positions        // colors (not used in this example)
+    -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 0.0f, // top left
+    0.5f,  0.5f,  0.0f, 0.0f, 1.0f, 0.0f, // top right
+    0.5f,  -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom right
+    -0.5f, -0.5f, 0.0f, 1.0f, 1.0f, 0.0f, // bottom left
 };
 
 // render routine
-void do_render(unsigned VAO) {
+void do_render(GLuint VAO) {
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   glBindVertexArray(VAO);
@@ -76,7 +80,7 @@ int main() try {
   using UWnd = std::unique_ptr<GLFWwindow, decltype(Cleanup)>;
   UWnd Wnd(initialize_window(), Cleanup);
 
-  unsigned int VBO, VAO;
+  GLuint VBO, VAO;
   glGenVertexArrays(1, &VAO);
   glGenBuffers(1, &VBO);
 
@@ -86,12 +90,11 @@ int main() try {
   glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 
   // position attribute
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
-                        (void *)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), nullptr);
   glEnableVertexAttribArray(0);
   // color attribute
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
-                        (void *)(3 * sizeof(GLfloat)));
+                        reinterpret_cast<void *>(3 * sizeof(GLfloat)));
   glEnableVertexAttribArray(1);
 
   while (!glfwWindowShouldClose(Wnd.get())) {
