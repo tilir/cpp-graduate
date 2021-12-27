@@ -99,6 +99,9 @@ class Renderer {
   bool LeftPress = false;
   double OldX, OldY;
 
+  // Sceleton mode toggle support
+  bool LineMode = false;
+
 public:
   Renderer(GLFWwindow *Wnd);
   Renderer(const Renderer &) = delete;
@@ -309,6 +312,20 @@ void Renderer::notifyKey(int key, int scancode, int action, int mods) {
       Radius -= RadiusDelta;
     if (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)
       Radius += RadiusDelta;
+  }
+
+  if (action == GLFW_PRESS) {
+    if (key == GLFW_KEY_L) {
+      LineMode = !LineMode;
+      glPolygonMode(GL_FRONT_AND_BACK, LineMode ? GL_LINE : GL_FILL);
+      if (LineMode) {
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+      } else {
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+      }
+    }
   }
 }
 
