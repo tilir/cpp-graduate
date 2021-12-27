@@ -39,7 +39,7 @@ constexpr int SZX = 600;
 constexpr int SZY = 600;
 
 constexpr const char *VERTNAME = "shaders/models.vert";
-constexpr const char *FRAGNAME = "shaders/simplest.frag";
+constexpr const char *FRAGNAME = "shaders/sincolor.frag";
 
 constexpr glm::vec3 STARTPOS = {0.0f, 0.0f, 3.0f};
 constexpr glm::vec3 STARTFRONT = {0.0f, 0.0f, 0.0f};
@@ -66,10 +66,19 @@ GLfloat Vertices[] = {
 
 // cube sides to render
 GLubyte Indices[] = {
+    // clang-format off
+// those indices better to be in cube order
     // quads
-    0, 3, 2, 1, 4, 7, 3, 0, 1, 2, 6, 5, 4, 0, 1, 5, 3, 7, 6, 2, 5, 6, 7, 4,
+    0, 3, 2, 1,
+    4, 7, 3, 0,
+    1, 2, 6, 5,
+    4, 0, 1, 5,
+    3, 7, 6, 2,
+    5, 6, 7, 4,
+    // clang-format on
 };
 
+// simplest approach: do you already see problems?
 class Renderer {
   GLFWwindow *Wnd_;
   GLuint ProgID;
@@ -80,12 +89,13 @@ class Renderer {
   float VerticalAngle = 0.0f;
   float Radius = 3.0f;
 
-  // projection params:
+  // projection params: Field of view, Aspect, etc...
   float FoV = 45.0f;
   float Aspect = static_cast<float>(SZX) / SZY;
   float Near = 0.1f;
   float Far = 100.0f;
 
+  // Mouse button params to make control easier
   bool LeftPress = false;
   double OldX, OldY;
 
@@ -100,7 +110,7 @@ public:
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &IBO);
   }
-  void display();
+  void display() const;
   void notifyKey(int key, int scancode, int action, int mods);
   void notifyMouseMove(double xpos, double ypos);
   void notifyMouseButton(int button, int action, int mods);
@@ -126,7 +136,8 @@ struct glsl_error : public std::runtime_error {
   }
 };
 
-// throw on errors
+// { different trivial callbacks
+
 void error_callback(int, const char *err_str) { throw glfw_error(err_str); }
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action,
@@ -143,6 +154,8 @@ static void mouse_button_callback(GLFWwindow *window, int button, int action,
                                   int mods) {
   TheRenderer->notifyMouseButton(button, action, mods);
 }
+
+// }
 
 // make sure the viewport matches the new window dimensions
 static void framebuffer_size_callback(GLFWwindow *window, int width,
@@ -220,6 +233,7 @@ void setFloatMatrix4(GLuint ProgID, const char *Name, float *Vals) {
   glUniformMatrix4fv(Loc, 1, GL_FALSE, Vals);
 }
 
+// renderer ctor: all OpenGL initialization goes here
 Renderer::Renderer(GLFWwindow *Wnd) : Wnd_(Wnd), ProgID(linkShaders()) {
   // viewport
   glViewport(0, 0, SZX, SZY);
@@ -260,7 +274,7 @@ Renderer::Renderer(GLFWwindow *Wnd) : Wnd_(Wnd), ProgID(linkShaders()) {
 }
 
 // render routine
-void Renderer::display() {
+void Renderer::display() const {
   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(ProgID);
@@ -288,11 +302,12 @@ void Renderer::display() {
   glDrawElements(GL_QUADS, 4 * 6, GL_UNSIGNED_BYTE, (GLvoid *)0);
 }
 
+// Key control: zoom in/out
 void Renderer::notifyKey(int key, int scancode, int action, int mods) {
   if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-    if (key == GLFW_KEY_UP)
+    if (key == GLFW_KEY_UP || key == GLFW_KEY_W)
       Radius -= RadiusDelta;
-    if (key == GLFW_KEY_DOWN)
+    if (key == GLFW_KEY_DOWN || key == GLFW_KEY_S)
       Radius += RadiusDelta;
   }
 }
@@ -306,6 +321,7 @@ template <typename T> T myclamp(T x, T low, T hi) {
   return x;
 }
 
+// We need to recognize move only if mouse is pressed
 void Renderer::notifyMouseMove(double xpos, double ypos) {
   if (LeftPress) {
     float xoffset = xpos - OldX;
@@ -319,6 +335,7 @@ void Renderer::notifyMouseMove(double xpos, double ypos) {
   }
 }
 
+// Notify press/release, remember x/y
 void Renderer::notifyMouseButton(int button, int action, int mods) {
   if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
     LeftPress = true;
