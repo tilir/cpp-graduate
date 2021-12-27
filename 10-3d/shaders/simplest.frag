@@ -6,19 +6,18 @@
 //
 //-----------------------------------------------------------------------------
 //
-//  Simple but interesting fragment shader example
+//  Simple fragment shader: varying color passed from vertex, interpolated
 //
-//----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
+#version 460
 
 // from vertex shader
-in vec3 ourColor;
-
-// to rasterizer
-out vec4 FragColor;
+in vec3 vColor;
 
 // time in seconds with fractional part
 uniform float time;
 
 void main() {  
-	FragColor = vec4(ourColor, 1.0);
+	gl_FragColor = vec4(vColor, 1.0);
 }
