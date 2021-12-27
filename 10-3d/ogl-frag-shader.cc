@@ -49,11 +49,27 @@ struct glfw_error : public std::runtime_error {
 // custom error handler class: GLSL
 struct glsl_error : public std::runtime_error {
   std::string ShaderLog;
-  glsl_error(const char *s, GLuint ShaderID) : std::runtime_error(s) {
+  glsl_error(const char *s) : std::runtime_error(s) {}
+};
+
+// custom error handler class: GLSL compilation
+struct glsl_compile_error : glsl_error {
+  glsl_compile_error(const char *s, GLuint ShaderID) : glsl_error(s) {
     GLint Length;
     glGetShaderiv(ShaderID, GL_INFO_LOG_LENGTH, &Length);
     std::vector<char> ShaderLogV(Length);
     glGetShaderInfoLog(ShaderID, Length, NULL, ShaderLogV.data());
+    ShaderLog.assign(ShaderLogV.begin(), ShaderLogV.end());
+  }
+};
+
+// custom error handler class: GLSL link
+struct glsl_link_error : glsl_error {
+  glsl_link_error(const char *s, GLuint ProgID) : glsl_error(s) {
+    GLint Length;
+    glGetProgramiv(ProgID, GL_INFO_LOG_LENGTH, &Length);
+    std::vector<char> ShaderLogV(Length);
+    glGetProgramInfoLog(ProgID, Length, NULL, ShaderLogV.data());
     ShaderLog.assign(ShaderLogV.begin(), ShaderLogV.end());
   }
 };
@@ -112,7 +128,7 @@ GLuint installShader(std::string ShaderCode, GLenum ShaderType) {
   GLint Success;
   glGetShaderiv(ShaderID, GL_COMPILE_STATUS, &Success);
   if (!Success)
-    throw glsl_error("Failed to compile shader", ShaderID);
+    throw glsl_compile_error("Failed to compile shader", ShaderID);
 
   return ShaderID;
 }
@@ -128,7 +144,7 @@ GLuint linkShaders() {
   GLint Success;
   glGetShaderiv(ProgID, GL_LINK_STATUS, &Success);
   if (!Success)
-    throw glsl_error("Failed to link program", ProgID);
+    throw glsl_link_error("Failed to link program", ProgID);
   return ProgID;
 }
 
