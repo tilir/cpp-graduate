@@ -172,20 +172,19 @@ int main() try {
 
   GLuint VBO, VAO;
   glGenVertexArrays(1, &VAO);
-  glGenBuffers(1, &VBO);
-
   glBindVertexArray(VAO);
 
+  glGenBuffers(1, &VBO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
 
   // position attribute
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
-                        (void *)0);
+                        reinterpret_cast<void *>(0 * sizeof(GLfloat)));
   glEnableVertexAttribArray(0);
   // color attribute
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat),
-                        (void *)(3 * sizeof(GLfloat)));
+                        reinterpret_cast<void *>(3 * sizeof(GLfloat)));
   glEnableVertexAttribArray(1);
 
   // create/install shaders
