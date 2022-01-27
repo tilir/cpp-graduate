@@ -12,9 +12,14 @@
 //
 //-----------------------------------------------------------------------------
 
-#include "CL/cl.h"
 #include <assert.h>
 #include <stdio.h>
+
+#ifndef CL_TARGET_OPENCL_VERSION
+#define CL_TARGET_OPENCL_VERSION 120
+#endif
+
+#include "CL/cl.h"
 
 struct platforms_t {
   cl_uint n;
@@ -146,7 +151,7 @@ void print_device_info(cl_device_id devid) {
 
 void enumerate_devices(cl_platform_id platfid) {
   cl_int ret;
-  cl_uint numdevices;
+  cl_uint i, numdevices;
   cl_device_id *devices;
 
   ret = clGetDeviceIDs(platfid, CL_DEVICE_TYPE_ALL, 0, NULL, &numdevices);
@@ -160,21 +165,21 @@ void enumerate_devices(cl_platform_id platfid) {
   ret = clGetDeviceIDs(platfid, CL_DEVICE_TYPE_ALL, numdevices, devices, NULL);
   CHECK_ERR(ret);
 
-  for (j = 0; j < numdevices; ++j)
-    print_device_info(devices[j]);
+  for (i = 0; i < numdevices; ++i)
+    print_device_info(devices[i]);
 
   free(devices);
 }
 
 int main() {
-  cl_uint i, j;
+  cl_uint i;
   struct platforms_t platforms;
 
   platforms = get_platforms();
 
   for (i = 0; i < platforms.n; ++i) {
     print_platform_info(platforms.ids[i]);
-    enum_devices(platforms.ids[i]);
+    enumerate_devices(platforms.ids[i]);
   }
 
   free(platforms.ids);
