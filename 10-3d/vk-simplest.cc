@@ -568,7 +568,7 @@ void VkApp::create_render_pass() {
       vkCreateRenderPass(Device, &renderPassInfo, nullptr, &RenderPass));
 }
 
-// pipeline requires logical device, descriptor set layout and shader IDs
+// pipeline requires logical device, render pass, descriptor set layout and shader IDs
 void VkApp::create_pipeline(VkShaderModule VertexID,
                             VkShaderModule FragmentID) {
   StoredVertexID = VertexID;
@@ -724,6 +724,7 @@ unsigned VkApp::findMemoryType(unsigned typeFilter,
                                VkMemoryPropertyFlags properties) {
   VkPhysicalDeviceMemoryProperties memProperties;
   vkGetPhysicalDeviceMemoryProperties(PhysDevice, &memProperties);
+  dbgs << memProperties.memoryTypeCount << " memory types found\n";
   for (unsigned i = 0; i < memProperties.memoryTypeCount; ++i)
     if ((typeFilter & (1 << i)) &&
         (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
@@ -846,6 +847,7 @@ void VkApp::create_buffers() {
   }
 }
 
+// requires: render pass, pipeline, swap chain, vertex buffers
 void VkApp::create_command_buffers() {
   unsigned NFrameBufs = SwapChainFramebuffers.size();
   dbgs << "Number of command buffers: " << NFrameBufs << std::endl;
