@@ -67,7 +67,7 @@ cl_platform_id select_platform() {
     ret = clGetPlatformInfo(pid, CL_PLATFORM_PROFILE, sizeof(buf), buf, NULL);
     CHECK_ERR(ret);
     if (!strcmp(buf, "FULL_PROFILE")) {
-      cl_uint numdevices;
+      cl_uint numdevices = 0;
       ret = clGetPlatformInfo(pid, CL_PLATFORM_NAME, sizeof(buf), buf, NULL);
       CHECK_ERR(ret);
       ret = clGetDeviceIDs(pid, CL_DEVICE_TYPE_GPU, 0, NULL, &numdevices);
