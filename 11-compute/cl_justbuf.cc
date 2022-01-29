@@ -25,6 +25,8 @@
 
 #include "CL/opencl.hpp"
 
+namespace {
+
 // first platform with some GPUs...
 cl::Platform select_platform() {
   cl::vector<cl::Platform> platforms;
@@ -40,6 +42,8 @@ cl::Platform select_platform() {
 }
 
 enum { BUFSZ = 128 };
+
+} // namespace
 
 int main() try {
   cl::Platform P = select_platform();

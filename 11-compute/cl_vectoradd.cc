@@ -71,10 +71,11 @@ public:
   }
 
   // C[i] = A[i] + B[i]
-  template <typename T> void vadd(T const *A, T const *B, T *C, size_t Sz);
+  // Here we shall ask ourselfes: why not template?
+  void vadd(cl_int const *A, cl_int const *B, cl_int *C, size_t Sz);
 };
 
-// first platform with some GPUs...
+// select first platform with some GPUs
 cl::Platform OclApp::select_platform() {
   cl::vector<cl::Platform> platforms;
   cl::Platform::get(&platforms);
@@ -88,6 +89,7 @@ cl::Platform OclApp::select_platform() {
   throw std::runtime_error("No platform selected");
 }
 
+// get context for selected platform
 cl::Context OclApp::get_gpu_context(cl_platform_id PId) {
   cl_context_properties properties[] = {
       CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>(PId),
@@ -97,9 +99,9 @@ cl::Context OclApp::get_gpu_context(cl_platform_id PId) {
   return cl::Context(CL_DEVICE_TYPE_GPU, properties);
 }
 
-template <typename T>
-void OclApp::vadd(T const *APtr, T const *BPtr, T *CPtr, size_t Sz) {
-  size_t BufSz = Sz * sizeof(T);
+void OclApp::vadd(cl_int const *APtr, cl_int const *BPtr, cl_int *CPtr,
+                  size_t Sz) {
+  size_t BufSz = Sz * sizeof(cl_int);
 
   cl::Buffer A(C_, CL_MEM_READ_ONLY, BufSz);
   cl::Buffer B(C_, CL_MEM_READ_ONLY, BufSz);
