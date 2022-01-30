@@ -6,17 +6,13 @@
 //
 //-----------------------------------------------------------------------------
 //
-// Simple SGEMM/DGEMM kernel
-// GEMM is operation like: C = alpha * A * B + beta * C
-// Here we just doing special case with alpha = 1.0, beta = 0.0
+// Simple histogram kernel
 //
-// clang++ -std=c++20 -DTYPE=float -o sgemm.exe cl_gemm.cc -lOpenCL
-// clang++ -std=c++20 -DTYPE=double -o dgemm.exe cl_gemm.cc -lOpenCL
+// clang++ -std=c++20 -o hist.exe cl_hist.cc -lOpenCL
 //
-// sgemm.exe -kernel=gemm_simple.cl
-// sgemm.exe -kernel=gemm_simple.cl -ay=5120
-// sgemm.exe -kernel=gemm_localmem.cl -ay=5120
-// sgemm.exe -kernel=gemm_localmem.cl -lsz=4 -ay=5120
+// hist.exe -kernel=hist-onlyg.cl -dsz=1000000 -hsz=1024 -lsz=256
+// hist.exe -kernel=hist-onlyg-corr.cl -dsz=1000000 -hsz=1024 -lsz=256
+// hist.exe -kernel=hist.cl -dsz=1000000 -hsz=1024 -lsz=256
 //
 //-----------------------------------------------------------------------------
 
@@ -57,21 +53,14 @@
   } else                                                                       \
     std::cout
 
-#ifndef TYPE
-#define TYPE float
-#endif
-
-#define STRINGIFY(X) #X
-#define TSTRINGIFY(X) STRINGIFY(X)
-#define STYPE TSTRINGIFY(TYPE)
+constexpr int DATABLOCK = 256;
 
 // config for program: we can also read it from options
 struct Config {
-  int AX = 256 * 2;
-  int AY = 256 * 2;
-  int BY = 256 * 2;
+  int DataSize = 1;  // number of 256-blocks
+  int HistSize = 32; // bumber of bins
   int LSZ = 1;
-  const char *PATH = "gemm_simple.cl";
+  const char *PATH = "hist.cl";
   static Config readCfg(int argc, char **argv);
   void dump(std::ostream &Os);
 };
@@ -87,15 +76,11 @@ struct option_error : public std::runtime_error {
 };
 
 // generic random initialization
-template <typename It> void rand_init(It start, It end, TYPE low, TYPE up);
+template <typename It> void rand_init(It start, It end, int low, int up);
 
-// basic reference multiplication
-template <typename T>
-void matrix_mult_ref(const T *A, const T *B, T *C, int AX, int AY, int BY);
-
-// cache-friendly reference multiplication
-template <typename T>
-void transpose_mult_ref(const T *A, const T *B, T *C, int AX, int AY, int BY);
+// reference histogram
+template <typename TD, typename TH>
+void hist_ref(const TD *Data, int DataSize, TH *Hist, int HistSize);
 
 // OpenCL application encapsulates platform, context and queue
 // We can offload vector addition through its public interface
@@ -110,8 +95,8 @@ class OclApp {
   static cl::Context get_gpu_context(cl_platform_id);
   static std::string readFile(const char *);
 
-  using mmult_t =
-      cl::KernelFunctor<cl::Buffer, cl::Buffer, cl::Buffer, int, int, int>;
+  using hist_t = cl::KernelFunctor<cl::Buffer, cl_int, cl::Buffer,
+                                   cl::LocalSpaceArg, cl_int>;
 
 public:
   OclApp(Config Cfg)
@@ -121,79 +106,44 @@ public:
     cl::string name = P_.getInfo<CL_PLATFORM_NAME>();
     cl::string profile = P_.getInfo<CL_PLATFORM_PROFILE>();
     dbgs << "Selected: " << name << ": " << profile << std::endl;
-
-#if ENABLE_EXT
-    // example of how to enable OpenCL extension
-    Def = "#pragma OPENCL EXTENSION cl_khr_fp64 : enable\n";
-    K_ = Def + K_;
-#endif
-    Def = std::string("#define TYPE ") + STYPE + "\n";
-    K_ = Def + K_;
-    Def = std::string("#define TS ") + std::to_string(Cfg.LSZ) + "\n";
-    K_ = Def + K_;
-    dbgs << "-- Kernel --\n" << K_ << "\n-- End kernel --" << std::endl;
   }
 
-  int localx() const { return Cfg_.LSZ; }
-  int localy() const { return Cfg_.LSZ; }
+  int lsz() const { return Cfg_.LSZ; }
 
-  void mmult(const TYPE *A, const TYPE *B, TYPE *C, int AX, int AY, int BY);
+  void hist(const unsigned char *Data, int DataSize, int *Hist, int HistSize);
 };
-
-void outm(const TYPE *M, int MX, int MY) {
-  for (int i = 0; i < MX; ++i) {
-    for (int j = 0; j < MY; ++j)
-      std::cout << M[i * MY + j] << " ";
-    std::cout << std::endl;
-  }
-}
 
 int main(int argc, char **argv) try {
   std::chrono::high_resolution_clock::time_point tstart_, tfin_;
   long dur;
   Config Cfg = Config::readCfg(argc, argv);
-  dbgs << "Hello from mmult. Config:\n" << Cfg << std::endl;
+  dbgs << "Hello from hist. Config:\n" << Cfg << std::endl;
 
   OclApp App(Cfg);
-  cl::vector<TYPE> A(Cfg.AX * Cfg.AY), B(Cfg.AY * Cfg.BY), C(Cfg.AX * Cfg.BY);
+  cl::vector<unsigned char> Data(Cfg.DataSize * DATABLOCK);
+  cl::vector<int> Hist(Cfg.HistSize);
 
-  // random initialize -- we just want to excersize and measure
-  rand_init(A.begin(), A.end(), 0, 10);
-  rand_init(B.begin(), B.end(), 0, 10);
+  rand_init(Data.begin(), Data.end(), 0, Cfg.HistSize - 1);
 
-  // do matrix multiply
   tstart_ = std::chrono::high_resolution_clock::now();
-  App.mmult(A.data(), B.data(), C.data(), Cfg.AX, Cfg.AY, Cfg.BY);
+  App.hist(Data.data(), Data.size(), Hist.data(), Cfg.HistSize);
   tfin_ = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(tfin_ - tstart_)
             .count();
   std::cout << "GPU time measured: " << dur << " ms" << std::endl;
 
-#ifdef VISUALIZE
-  std::cout << "--- Matrix ---\n";
-  outm(C.data(), Cfg.AX, Cfg.BY);
-  std::cout << "--- End Matrix ---\n";
-#endif
-
 #if COMPARE_CPU
-  cl::vector<TYPE> CCPU(Cfg.AX * Cfg.BY);
+  cl::vector<int> HistCPU(Cfg.HistSize);
   tstart_ = std::chrono::high_resolution_clock::now();
-  // matrix_mult_ref(A.data(), B.data(), CCPU.data(), Cfg.AX, Cfg.AY, Cfg.BY);
-  transpose_mult_ref(A.data(), B.data(), CCPU.data(), Cfg.AX, Cfg.AY, Cfg.BY);
+  hist_ref(Data.data(), Data.size(), HistCPU.data(), Cfg.HistSize);
   tfin_ = std::chrono::high_resolution_clock::now();
   dur = std::chrono::duration_cast<std::chrono::milliseconds>(tfin_ - tstart_)
             .count();
   std::cout << "CPU time measured: " << dur << " ms" << std::endl;
 
-#ifdef VISUALIZE
-  std::cout << "--- Matrix ---\n";
-  outm(CCPU.data(), Cfg.AX, Cfg.BY);
-  std::cout << "--- End Matrix ---\n";
-#endif
-
-  for (int i = 0; i < Cfg.AX * Cfg.BY; ++i) {
-    auto lhs = C[i];
-    auto rhs = CCPU[i];
+  for (int i = 0; i < Cfg.HistSize; ++i) {
+    auto lhs = Hist[i];
+    auto rhs = HistCPU[i];
     if (lhs != rhs) {
       std::cerr << "Error at index " << i << ": " << lhs << " != " << rhs
                 << std::endl;
@@ -231,33 +181,29 @@ int main(int argc, char **argv) try {
 //
 //-----------------------------------------------------------------------------
 
-void OclApp::mmult(const TYPE *APtr, const TYPE *BPtr, TYPE *CPtr, int AX,
-                   int AY, int BY) {
-  size_t ASz = AX * AY, ABufSz = ASz * sizeof(TYPE);
-  size_t BSz = AY * BY, BBufSz = BSz * sizeof(TYPE);
-  size_t CSz = AX * BY, CBufSz = CSz * sizeof(TYPE);
+void OclApp::hist(const unsigned char *Data, int DataSize, int *Hist,
+                  int HistSize) {
+  size_t DataBufSize = DataSize * sizeof(unsigned char);
+  size_t HistBufSize = HistSize * sizeof(int);
 
-  cl::Buffer A(C_, CL_MEM_READ_ONLY, ABufSz);
-  cl::Buffer B(C_, CL_MEM_READ_ONLY, BBufSz);
-  cl::Buffer C(C_, CL_MEM_WRITE_ONLY, CBufSz);
+  cl::Buffer D(C_, CL_MEM_READ_ONLY, DataBufSize);
+  cl::Buffer H(C_, CL_MEM_WRITE_ONLY, HistBufSize);
 
-  cl::copy(Q_, APtr, APtr + ASz, A);
-  cl::copy(Q_, BPtr, BPtr + ASz, B);
+  cl::copy(Q_, Data, Data + DataSize, D);
 
-  // try forget context here and happy debugging CL_INVALID_MEM_OBJECT:
-  // cl::Program program(vakernel, true /* build immediately */);
   cl::Program program(C_, K_, true /* build immediately */);
 
-  mmult_t gemm(program, "matrix_multiply");
+  hist_t hist(program, "histogram");
 
-  cl::NDRange GlobalRange(AX, BY); // do you understand why C size here?
-  cl::NDRange LocalRange(localx(), localy());
+  cl::NDRange GlobalRange(DataSize);
+  cl::NDRange LocalRange(lsz());
   cl::EnqueueArgs Args(Q_, GlobalRange, LocalRange);
 
-  cl::Event evt = gemm(Args, A, B, C, AX, AY, BY);
+  cl::Event evt =
+      hist(Args, D, DataSize, H, cl::Local(HistSize * sizeof(int)), HistSize);
   evt.wait();
 
-  cl::copy(Q_, C, CPtr, CPtr + CSz);
+  cl::copy(Q_, H, Hist, Hist + HistSize);
 }
 
 // read program code from file
@@ -304,9 +250,8 @@ cl::Context OclApp::get_gpu_context(cl_platform_id PId) {
 //-----------------------------------------------------------------------------
 
 // options are:
-// -ax=<int>
-// -ay=<int>
-// -by=<int>
+// -dsz=<int>
+// -hsz=<int>
 // -lsz=<int>
 // -kernel=<string>
 // I don't want to make study example depend from boost::po, so keep it simple
@@ -315,18 +260,14 @@ Config Config::readCfg(int argc, char **argv) {
   for (int i = 1; i < argc; ++i) {
     std::string_view Argvi = argv[i];
     auto ArgviEnd = Argvi.data() + Argvi.size();
-    if (Argvi.starts_with("-ax=")) {
-      auto Result = std::from_chars(Argvi.data() + 4, ArgviEnd, Cfg.AX);
+    if (Argvi.starts_with("-dsz=")) {
+      auto Result = std::from_chars(Argvi.data() + 5, ArgviEnd, Cfg.DataSize);
       if (Result.ec == std::errc::invalid_argument)
-        std::cerr << "Can not parse -ax option, using default\n";
-    } else if (Argvi.starts_with("-ay=")) {
-      auto Result = std::from_chars(Argvi.data() + 4, ArgviEnd, Cfg.AY);
+        std::cerr << "Can not parse -dsz option, using default\n";
+    } else if (Argvi.starts_with("-hsz=")) {
+      auto Result = std::from_chars(Argvi.data() + 5, ArgviEnd, Cfg.HistSize);
       if (Result.ec == std::errc::invalid_argument)
-        std::cerr << "Can not parse -ay option, using default\n";
-    } else if (Argvi.starts_with("-by=")) {
-      auto Result = std::from_chars(Argvi.data() + 4, ArgviEnd, Cfg.BY);
-      if (Result.ec == std::errc::invalid_argument)
-        std::cerr << "Can not parse -by option, using default\n";
+        std::cerr << "Can not parse -hsz option, using default\n";
     } else if (Argvi.starts_with("-lsz=")) {
       auto Result = std::from_chars(Argvi.data() + 5, ArgviEnd, Cfg.LSZ);
       if (Result.ec == std::errc::invalid_argument)
@@ -342,9 +283,9 @@ Config Config::readCfg(int argc, char **argv) {
 
 // dump config to stream
 void Config::dump(std::ostream &Os) {
-  Os << "[" << AX << " x " << AY << "] * ";
-  Os << "[" << AY << " x " << BY << "]\n";
-  Os << "local size = [" << LSZ << " x " << LSZ << "]\n";
+  Os << "data size = " << DataSize << "\n";
+  Os << "hist size = " << HistSize << "\n";
+  Os << "local size = " << LSZ << "\n";
   Os << "kernel path = " << PATH;
 }
 
@@ -355,47 +296,18 @@ void Config::dump(std::ostream &Os) {
 //-----------------------------------------------------------------------------
 
 // generic random initialization
-template <typename It> void rand_init(It start, It end, TYPE low, TYPE up) {
+template <typename It> void rand_init(It start, It end, int low, int up) {
   static std::mt19937_64 mt_source;
   std::uniform_int_distribution<int> dist(low, up);
   for (It cur = start; cur != end; ++cur)
     *cur = dist(mt_source);
 }
 
-// multiply on CPU, basic version
-template <typename T>
-void matrix_mult_ref(const T *A, const T *B, T *C, int AX, int AY, int BY) {
-  assert(A != NULL && B != NULL && C != NULL);
-  assert(AX > 0 && AY > 0 && BY > 0);
-  int i, j, k;
-  for (i = 0; i < AX; i++) {
-    for (j = 0; j < BY; j++) {
-      T acc = 0;
-      for (k = 0; k < AY; k++)
-        acc += A[i * AY + k] * B[k * BY + j];
-      C[i * BY + j] = acc;
-    }
-  }
-}
-
-// multiply on CPU, cache-friendly version
-template <typename T>
-void transpose_mult_ref(const T *A, const T *B, T *C, int AX, int AY, int BY) {
-  assert(A != NULL && B != NULL && C != NULL);
-  assert(AX > 0 && AY > 0 && BY > 0);
-  std::vector<T> tmp(BY * AY);
-  int i, j, k;
-
-  for (i = 0; i < AY; i++)
-    for (j = 0; j < BY; j++)
-      tmp[j * AY + i] = B[i * BY + j];
-
-  for (i = 0; i < AX; i++) {
-    for (j = 0; j < BY; j++) {
-      T acc = 0;
-      for (k = 0; k < AY; k++)
-        acc += A[i * AY + k] * tmp[j * AY + k];
-      C[i * BY + j] = acc;
-    }
+// reference histogram
+template <typename TD, typename TH>
+void hist_ref(const TD *Data, int DataSize, TH *Hist, int HistSize) {
+  for (int i = 0; i < DataSize; ++i) {
+    assert(Data[i] < HistSize && Data[i] >= 0);
+    Hist[Data[i]] += 1;
   }
 }

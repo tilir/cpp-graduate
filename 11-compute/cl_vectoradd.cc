@@ -120,7 +120,8 @@ void OclApp::vadd(cl_int const *APtr, cl_int const *BPtr, cl_int *CPtr,
   cl::NDRange LocalRange(LOCAL_SIZE);
   cl::EnqueueArgs Args(Q_, GlobalRange, LocalRange);
 
-  add_vecs(Args, A, B, C);
+  cl::Event evt = add_vecs(Args, A, B, C);
+  evt.wait();
 
   cl::copy(Q_, C, CPtr, CPtr + Sz);
 }
