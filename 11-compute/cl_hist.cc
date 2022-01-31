@@ -6,13 +6,13 @@
 //
 //-----------------------------------------------------------------------------
 //
-// Simple histogram kernel
+// Simple histogram OpenCL application
 //
 // clang++ -std=c++20 -o hist.exe cl_hist.cc -lOpenCL
 //
-// hist.exe -kernel=hist-onlyg.cl -dsz=1000000 -hsz=1024 -lsz=256
-// hist.exe -kernel=hist-onlyg-corr.cl -dsz=1000000 -hsz=1024 -lsz=256
-// hist.exe -kernel=hist.cl -dsz=1000000 -hsz=1024 -lsz=256
+// hist.exe -kernel=hist-onlyg.cl -dsz=1000000 -hsz=1024 -lsz=256 -gsz=100
+// hist.exe -kernel=hist-onlyg-corr.cl -dsz=1000000 -hsz=1024 -lsz=256 -gsz=100
+// hist.exe -kernel=hist.cl -dsz=1000000 -hsz=1024 -lsz=256 -gsz=100
 //
 //-----------------------------------------------------------------------------
 
@@ -57,10 +57,13 @@ constexpr int DATABLOCK = 256;
 
 // config for program: we can also read it from options
 struct Config {
-  int DataSize = 1;  // number of 256-blocks
-  int HistSize = 32; // bumber of bins
+  int DataSize = 1;   // number of 256-blocks
+  int GlobalSize = 1; // number of 256-datagroups
+  int HistSize = 32;  // number of histogram bins
   int LSZ = 1;
   const char *PATH = "hist.cl";
+  cl::QueueProperties QProps =
+      cl::QueueProperties::Profiling | cl::QueueProperties::OutOfOrder;
   static Config readCfg(int argc, char **argv);
   void dump(std::ostream &Os);
 };
@@ -100,7 +103,7 @@ class OclApp {
 
 public:
   OclApp(Config Cfg)
-      : P_(select_platform()), C_(get_gpu_context(P_())), Q_(C_),
+      : P_(select_platform()), C_(get_gpu_context(P_())), Q_(C_, Cfg.QProps),
         K_(readFile(Cfg.PATH)), Cfg_(Cfg) {
     std::string Def;
     cl::string name = P_.getInfo<CL_PLATFORM_NAME>();
@@ -110,12 +113,14 @@ public:
 
   int lsz() const { return Cfg_.LSZ; }
 
-  void hist(const unsigned char *Data, int DataSize, int *Hist, int HistSize);
+  cl::Event hist(const unsigned char *Data, int DataSize, int *Hist,
+                 int HistSize);
 };
 
 int main(int argc, char **argv) try {
-  std::chrono::high_resolution_clock::time_point tstart_, tfin_;
-  long dur;
+  std::chrono::high_resolution_clock::time_point TimeStart, TimeFin;
+  cl_ulong GPUTimeStart, GPUTimeFin;
+  long Dur, GDur;
   Config Cfg = Config::readCfg(argc, argv);
   dbgs << "Hello from hist. Config:\n" << Cfg << std::endl;
 
@@ -125,21 +130,27 @@ int main(int argc, char **argv) try {
 
   rand_init(Data.begin(), Data.end(), 0, Cfg.HistSize - 1);
 
-  tstart_ = std::chrono::high_resolution_clock::now();
-  App.hist(Data.data(), Data.size(), Hist.data(), Cfg.HistSize);
-  tfin_ = std::chrono::high_resolution_clock::now();
-  dur = std::chrono::duration_cast<std::chrono::milliseconds>(tfin_ - tstart_)
-            .count();
-  std::cout << "GPU time measured: " << dur << " ms" << std::endl;
+  TimeStart = std::chrono::high_resolution_clock::now();
+  cl::Event evt = App.hist(Data.data(), Data.size(), Hist.data(), Cfg.HistSize);
+  TimeFin = std::chrono::high_resolution_clock::now();
+  Dur =
+      std::chrono::duration_cast<std::chrono::milliseconds>(TimeFin - TimeStart)
+          .count();
+  std::cout << "GPU wall time measured: " << Dur << " ms" << std::endl;
+  GPUTimeStart = evt.getProfilingInfo<CL_PROFILING_COMMAND_START>();
+  GPUTimeFin = evt.getProfilingInfo<CL_PROFILING_COMMAND_END>();
+  GDur = (GPUTimeFin - GPUTimeStart) / 1000000; // ns -> ms
+  std::cout << "GPU pure time measured: " << GDur << " ms" << std::endl;
 
 #if COMPARE_CPU
   cl::vector<int> HistCPU(Cfg.HistSize);
-  tstart_ = std::chrono::high_resolution_clock::now();
+  TimeStart = std::chrono::high_resolution_clock::now();
   hist_ref(Data.data(), Data.size(), HistCPU.data(), Cfg.HistSize);
-  tfin_ = std::chrono::high_resolution_clock::now();
-  dur = std::chrono::duration_cast<std::chrono::milliseconds>(tfin_ - tstart_)
-            .count();
-  std::cout << "CPU time measured: " << dur << " ms" << std::endl;
+  TimeFin = std::chrono::high_resolution_clock::now();
+  Dur =
+      std::chrono::duration_cast<std::chrono::milliseconds>(TimeFin - TimeStart)
+          .count();
+  std::cout << "CPU time measured: " << Dur << " ms" << std::endl;
 
   for (int i = 0; i < Cfg.HistSize; ++i) {
     auto lhs = Hist[i];
@@ -181,8 +192,8 @@ int main(int argc, char **argv) try {
 //
 //-----------------------------------------------------------------------------
 
-void OclApp::hist(const unsigned char *Data, int DataSize, int *Hist,
-                  int HistSize) {
+cl::Event OclApp::hist(const unsigned char *Data, int DataSize, int *Hist,
+                       int HistSize) {
   size_t DataBufSize = DataSize * sizeof(unsigned char);
   size_t HistBufSize = HistSize * sizeof(int);
 
@@ -195,15 +206,16 @@ void OclApp::hist(const unsigned char *Data, int DataSize, int *Hist,
 
   hist_t hist(program, "histogram");
 
-  cl::NDRange GlobalRange(DataSize);
+  cl::NDRange GlobalRange(Cfg_.GlobalSize * DATABLOCK);
   cl::NDRange LocalRange(lsz());
   cl::EnqueueArgs Args(Q_, GlobalRange, LocalRange);
 
-  cl::Event evt =
+  cl::Event Evt =
       hist(Args, D, DataSize, H, cl::Local(HistSize * sizeof(int)), HistSize);
-  evt.wait();
+  Evt.wait();
 
   cl::copy(Q_, H, Hist, Hist + HistSize);
+  return Evt; // to collect profiling info
 }
 
 // read program code from file
@@ -264,6 +276,10 @@ Config Config::readCfg(int argc, char **argv) {
       auto Result = std::from_chars(Argvi.data() + 5, ArgviEnd, Cfg.DataSize);
       if (Result.ec == std::errc::invalid_argument)
         std::cerr << "Can not parse -dsz option, using default\n";
+    } else if (Argvi.starts_with("-gsz=")) {
+      auto Result = std::from_chars(Argvi.data() + 5, ArgviEnd, Cfg.GlobalSize);
+      if (Result.ec == std::errc::invalid_argument)
+        std::cerr << "Can not parse -gsz option, using default\n";
     } else if (Argvi.starts_with("-hsz=")) {
       auto Result = std::from_chars(Argvi.data() + 5, ArgviEnd, Cfg.HistSize);
       if (Result.ec == std::errc::invalid_argument)
@@ -285,6 +301,7 @@ Config Config::readCfg(int argc, char **argv) {
 void Config::dump(std::ostream &Os) {
   Os << "data size = " << DataSize << "\n";
   Os << "hist size = " << HistSize << "\n";
+  Os << "global size = " << GlobalSize << "\n";
   Os << "local size = " << LSZ << "\n";
   Os << "kernel path = " << PATH;
 }

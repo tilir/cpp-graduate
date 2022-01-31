@@ -6,9 +6,9 @@
 //
 //-----------------------------------------------------------------------------
 //
-// Simple vectoradd kernel
+// Simple vectoradd OpenCL application
 //
-// clang++ cl_vectoradd.cc -lOpenCL
+// clang++ -o vectoradd.exe cl_vectoradd.cc -lOpenCL
 //
 //-----------------------------------------------------------------------------
 

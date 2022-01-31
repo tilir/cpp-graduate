@@ -1,4 +1,16 @@
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT ILab
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+// Matrix multiplication kernel -- simplest possible
+//
 // external define TYPE required (added by framwork after reading kernel)
+//
+//-----------------------------------------------------------------------------
 
 __kernel void matrix_multiply(
     __global TYPE *A, __global TYPE *B, __global TYPE *C, int AX, int AY, int BY) {

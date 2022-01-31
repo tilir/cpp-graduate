@@ -1,3 +1,15 @@
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT ILab
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+// Histogram kernel -- naive but correct (with atomics)
+//
+//-----------------------------------------------------------------------------
+
 __kernel void histogram(
     __global uchar *data, int num_data, __global int *histogram,
     __local int *local_hist, int num_bins) {  

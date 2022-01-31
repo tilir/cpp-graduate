@@ -6,7 +6,7 @@
 //
 //-----------------------------------------------------------------------------
 //
-// Simple SGEMM/DGEMM kernel
+// Simple SGEMM/DGEMM OpenCL application
 // GEMM is operation like: C = alpha * A * B + beta * C
 // Here we just doing special case with alpha = 1.0, beta = 0.0
 //
@@ -72,6 +72,8 @@ struct Config {
   int BY = 256 * 2;
   int LSZ = 1;
   const char *PATH = "gemm_simple.cl";
+  cl::QueueProperties QProps =
+      cl::QueueProperties::Profiling | cl::QueueProperties::OutOfOrder;
   static Config readCfg(int argc, char **argv);
   void dump(std::ostream &Os);
 };
@@ -115,7 +117,7 @@ class OclApp {
 
 public:
   OclApp(Config Cfg)
-      : P_(select_platform()), C_(get_gpu_context(P_())), Q_(C_),
+      : P_(select_platform()), C_(get_gpu_context(P_())), Q_(C_, Cfg.QProps),
         K_(readFile(Cfg.PATH)), Cfg_(Cfg) {
     std::string Def;
     cl::string name = P_.getInfo<CL_PLATFORM_NAME>();
@@ -131,13 +133,16 @@ public:
     K_ = Def + K_;
     Def = std::string("#define TS ") + std::to_string(Cfg.LSZ) + "\n";
     K_ = Def + K_;
+#if DUMPKERNEL
     dbgs << "-- Kernel --\n" << K_ << "\n-- End kernel --" << std::endl;
+#endif
   }
 
   int localx() const { return Cfg_.LSZ; }
   int localy() const { return Cfg_.LSZ; }
 
-  void mmult(const TYPE *A, const TYPE *B, TYPE *C, int AX, int AY, int BY);
+  cl::Event mmult(const TYPE *A, const TYPE *B, TYPE *C, int AX, int AY,
+                  int BY);
 };
 
 void outm(const TYPE *M, int MX, int MY) {
@@ -149,8 +154,9 @@ void outm(const TYPE *M, int MX, int MY) {
 }
 
 int main(int argc, char **argv) try {
-  std::chrono::high_resolution_clock::time_point tstart_, tfin_;
-  long dur;
+  std::chrono::high_resolution_clock::time_point TimeStart, TimeFin;
+  cl_ulong GPUTimeStart, GPUTimeFin;
+  long Dur, GDur;
   Config Cfg = Config::readCfg(argc, argv);
   dbgs << "Hello from mmult. Config:\n" << Cfg << std::endl;
 
@@ -162,12 +168,18 @@ int main(int argc, char **argv) try {
   rand_init(B.begin(), B.end(), 0, 10);
 
   // do matrix multiply
-  tstart_ = std::chrono::high_resolution_clock::now();
-  App.mmult(A.data(), B.data(), C.data(), Cfg.AX, Cfg.AY, Cfg.BY);
-  tfin_ = std::chrono::high_resolution_clock::now();
-  dur = std::chrono::duration_cast<std::chrono::milliseconds>(tfin_ - tstart_)
-            .count();
-  std::cout << "GPU time measured: " << dur << " ms" << std::endl;
+  TimeStart = std::chrono::high_resolution_clock::now();
+  cl::Event Evt =
+      App.mmult(A.data(), B.data(), C.data(), Cfg.AX, Cfg.AY, Cfg.BY);
+  TimeFin = std::chrono::high_resolution_clock::now();
+  Dur =
+      std::chrono::duration_cast<std::chrono::milliseconds>(TimeFin - TimeStart)
+          .count();
+  std::cout << "GPU wall time measured: " << Dur << " ms" << std::endl;
+  GPUTimeStart = Evt.getProfilingInfo<CL_PROFILING_COMMAND_START>();
+  GPUTimeFin = Evt.getProfilingInfo<CL_PROFILING_COMMAND_END>();
+  GDur = (GPUTimeFin - GPUTimeStart) / 1000000; // ns -> ms
+  std::cout << "GPU pure time measured: " << GDur << " ms" << std::endl;
 
 #ifdef VISUALIZE
   std::cout << "--- Matrix ---\n";
@@ -177,13 +189,13 @@ int main(int argc, char **argv) try {
 
 #if COMPARE_CPU
   cl::vector<TYPE> CCPU(Cfg.AX * Cfg.BY);
-  tstart_ = std::chrono::high_resolution_clock::now();
-  // matrix_mult_ref(A.data(), B.data(), CCPU.data(), Cfg.AX, Cfg.AY, Cfg.BY);
+  TimeStart = std::chrono::high_resolution_clock::now();
   transpose_mult_ref(A.data(), B.data(), CCPU.data(), Cfg.AX, Cfg.AY, Cfg.BY);
-  tfin_ = std::chrono::high_resolution_clock::now();
-  dur = std::chrono::duration_cast<std::chrono::milliseconds>(tfin_ - tstart_)
-            .count();
-  std::cout << "CPU time measured: " << dur << " ms" << std::endl;
+  TimeFin = std::chrono::high_resolution_clock::now();
+  Dur =
+      std::chrono::duration_cast<std::chrono::milliseconds>(TimeFin - TimeStart)
+          .count();
+  std::cout << "CPU time measured: " << Dur << " ms" << std::endl;
 
 #ifdef VISUALIZE
   std::cout << "--- Matrix ---\n";
@@ -231,8 +243,8 @@ int main(int argc, char **argv) try {
 //
 //-----------------------------------------------------------------------------
 
-void OclApp::mmult(const TYPE *APtr, const TYPE *BPtr, TYPE *CPtr, int AX,
-                   int AY, int BY) {
+cl::Event OclApp::mmult(const TYPE *APtr, const TYPE *BPtr, TYPE *CPtr, int AX,
+                        int AY, int BY) {
   size_t ASz = AX * AY, ABufSz = ASz * sizeof(TYPE);
   size_t BSz = AY * BY, BBufSz = BSz * sizeof(TYPE);
   size_t CSz = AX * BY, CBufSz = CSz * sizeof(TYPE);
@@ -254,10 +266,11 @@ void OclApp::mmult(const TYPE *APtr, const TYPE *BPtr, TYPE *CPtr, int AX,
   cl::NDRange LocalRange(localx(), localy());
   cl::EnqueueArgs Args(Q_, GlobalRange, LocalRange);
 
-  cl::Event evt = gemm(Args, A, B, C, AX, AY, BY);
-  evt.wait();
+  cl::Event Evt = gemm(Args, A, B, C, AX, AY, BY);
+  Evt.wait();
 
   cl::copy(Q_, C, CPtr, CPtr + CSz);
+  return Evt;
 }
 
 // read program code from file

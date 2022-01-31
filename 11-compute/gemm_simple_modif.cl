@@ -1,3 +1,17 @@
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT ILab
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//-----------------------------------------------------------------------------
+//
+// Matrix multiplication kernel -- simplest possible
+//
+// Here type substituted to float for offline compilation
+//
+//-----------------------------------------------------------------------------
+
 #define TYPE float
 
 __kernel void matrix_multiply(
