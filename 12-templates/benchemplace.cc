@@ -21,6 +21,7 @@
 #include <chrono>
 #include <iostream>
 #include <numeric>
+#include <string>
 #include <vector>
 
 using std::chrono::duration_cast;
@@ -29,7 +30,11 @@ using std::chrono::milliseconds;
 
 constexpr int NSZ = 10000;
 
+#ifndef REAL_NOINLINE
+#define NOINLINE
+#else
 #define NOINLINE __attribute__((noinline))
+#endif
 
 struct Heavy {
   std::vector<int> v;
