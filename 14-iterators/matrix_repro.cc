@@ -28,7 +28,8 @@ public:
       : lines_(lines), columns_(columns), matrix_(lines * columns) {}
   T &at(int x, int y) { return matrix_[x * columns_ + y]; }
   const T &at(int x, int y) const { return matrix_[x * columns_ + y]; }
-  T *cdata() { return matrix_.data(); }
+  T *data() { return matrix_.data(); }
+  const T *cdata() const { return matrix_.data(); }
   int x() const { return lines_; }
   int y() const { return columns_; }
 
@@ -46,6 +47,11 @@ public:
     columns_ = columns;
     matrix_.resize(lines_ * columns_);
   }
+
+  auto begin() { return matrix_.begin(); }
+  auto cbegin() { return matrix_.begin(); }
+  auto end() { return matrix_.end(); }
+  auto cend() { return matrix_.end(); }
 };
 
 template <typename T>
@@ -80,6 +86,24 @@ void cpp_transpose_mult(const Matrix<T> &a, const Matrix<T> &b, Matrix<T> &c) {
         c.at(i, j) = a.at(i, k) * tmp.at(j, k);
 }
 
+template <typename CRandIt, typename RandIt>
+void iter_transpose_mult(CRandIt A, CRandIt B, RandIt C, int AX, int AY, int BY) {
+  assert(AX > 0 && AY > 0 && BY > 0);
+  using T = typename std::iterator_traits<RandIt>::value_type;
+  std::vector<T> tmp(BY * AY);
+
+  for (int i = 0; i < AY; i++)
+    for (int j = 0; j < BY; j++)
+      tmp[j * AY + i] = B[i * BY + j];
+
+  for (int i = 0; i < AX; i++)
+    for (int j = 0; j < BY; j++) {
+      C[i * BY + j] = 0;
+      for (int k = 0; k < AY; k++)
+        C[i * BY + j] += A[i * AY + k] * tmp[j * AY + k];
+    }
+}
+
 int main() {
   time_t start, fin;
   long elapsed;
@@ -89,7 +113,7 @@ int main() {
   C.resizeto(A.x(), A.y());
 
   start = clock();
-  c_transpose_mult(A.cdata(), B.cdata(), C.cdata(), A.x(), A.y(), B.y());
+  c_transpose_mult(A.cdata(), B.cdata(), C.data(), A.x(), A.y(), B.y());
   fin = clock();
   elapsed = fin - start;
   std::cout << "C with transpose: " << elapsed << "\n";
@@ -99,4 +123,10 @@ int main() {
   fin = clock();
   elapsed = fin - start;
   std::cout << "C++ with transpose: " << elapsed << "\n";
+
+  start = clock();
+  iter_transpose_mult(A.cbegin(), B.cbegin(), C.begin(), A.x(), A.y(), B.y());
+  fin = clock();
+  elapsed = fin - start;
+  std::cout << "C++ with iterators: " << elapsed << "\n";
 }
