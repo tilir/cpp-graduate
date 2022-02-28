@@ -87,7 +87,8 @@ void cpp_transpose_mult(const Matrix<T> &a, const Matrix<T> &b, Matrix<T> &c) {
 }
 
 template <typename CRandIt, typename RandIt>
-void iter_transpose_mult(CRandIt A, CRandIt B, RandIt C, int AX, int AY, int BY) {
+void iter_transpose_mult(CRandIt A, CRandIt B, RandIt C, int AX, int AY,
+                         int BY) {
   assert(AX > 0 && AY > 0 && BY > 0);
   using T = typename std::iterator_traits<RandIt>::value_type;
   std::vector<T> tmp(BY * AY);
