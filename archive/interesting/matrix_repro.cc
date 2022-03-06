@@ -55,28 +55,9 @@ public:
 };
 
 template <typename T>
-void cpp_transpose_mult(const Matrix<T> &a, const Matrix<T> &b, Matrix<T> &c) {
-  int AX = a.x(), AY = a.y(), BY = b.y();
-  assert(AX == b.x());
-  std::vector<T> tmp(BY * AY);
-
-  for (int i = 0; i < AY; ++i)
-    for (int j = 0; j < BY; ++j)
-      tmp[j * AY + i] = b.at(i, j);
-
-  for (int i = 0; i < AX; ++i)
-    for (int j = 0; j < BY; ++j) {
-      c.at(i, j) = 0;
-      for (int k = 0; k < AY; ++k)
-        c.at(i, j) += a.at(i, k) * tmp[j * AY + k];
-    }
-}
-
-template <typename CRandIt, typename RandIt>
-void iter_transpose_mult(CRandIt A, CRandIt B, RandIt C, int AX, int AY,
-                         int BY) {
+void c_transpose_mult(const T *A, const T *B, T *C, int AX, int AY, int BY) {
+  assert(A != NULL && B != NULL && C != NULL);
   assert(AX > 0 && AY > 0 && BY > 0);
-  using T = typename std::iterator_traits<RandIt>::value_type;
   std::vector<T> tmp(BY * AY);
 
   for (int i = 0; i < AY; i++)
@@ -91,6 +72,23 @@ void iter_transpose_mult(CRandIt A, CRandIt B, RandIt C, int AX, int AY,
     }
 }
 
+template <typename T>
+void cpp_transpose_mult(const Matrix<T> &a, const Matrix<T> &b, Matrix<T> &c) {
+  int AX = a.x(), AY = a.y(), BY = b.y();
+  assert(AX == b.x());
+  Matrix<T> tmp(BY, AY);
+  for (int i = 0; i < AY; ++i)
+    for (int j = 0; j < BY; ++j)
+      tmp.at(j, i) = b.at(i, j);
+
+  for (int i = 0; i < AX; ++i)
+    for (int j = 0; j < BY; ++j) {
+      c.at(i, j) = 0;
+      for (int k = 0; k < AY; ++k)
+        c.at(i, j) += a.at(i, k) * tmp.at(j, k);
+    }
+}
+
 int main() {
   time_t start, fin;
   long elapsed;
@@ -101,16 +99,16 @@ int main() {
   D.resizeto(A.x(), A.y());
 
   start = clock();
-  cpp_transpose_mult(A, B, C);
+  c_transpose_mult(A.cdata(), B.cdata(), C.data(), A.x(), A.y(), B.y());
+  fin = clock();
+  elapsed = fin - start;
+  std::cout << "C with transpose: " << elapsed << "\n";
+
+  start = clock();
+  cpp_transpose_mult(A, B, D);
   fin = clock();
   elapsed = fin - start;
   std::cout << "C++ with transpose: " << elapsed << "\n";
-
-  start = clock();
-  iter_transpose_mult(A.cbegin(), B.cbegin(), D.begin(), A.x(), A.y(), B.y());
-  fin = clock();
-  elapsed = fin - start;
-  std::cout << "C++ with iterators: " << elapsed << "\n";
 
   for (int i = 0; i < A.x(); ++i)
     for (int j = 0; j < A.y(); ++j)
