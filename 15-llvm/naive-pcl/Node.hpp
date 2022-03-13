@@ -142,7 +142,12 @@ public:
     return 0;
   }
   llvm::Value *codegen() override {
-    throw std::runtime_error("While codegen not implemented");
+    llvm::Value *CondV = Op_->codegen();
+    auto BBs = GlobalGen->StartWhile(CondV);
+    Scope_->codegen();
+    llvm::Value *CondVNew = Op_->codegen();
+    GlobalGen->EndWhile(CondVNew, BBs);
+    return nullptr;
   }
   void dump() const override {
     std::cout << "Node While " << std::endl;
@@ -172,7 +177,16 @@ public:
     return 0;
   }
   llvm::Value *codegen() override {
-    throw std::runtime_error("If codegen not implemented");
+    llvm::Value *CondV = Op_->codegen();
+#ifdef DUMPCOND
+    std::cout << "Op:\n";
+    llvm::errs() << *CondV << "\n";
+#endif
+    auto *MergeBB = GlobalGen->StartIf(CondV);
+    Scope_->codegen();
+    GlobalGen->EndIf(MergeBB);
+    // throw std::runtime_error("If codegen not implemented");
+    return nullptr;
   }
   void dump() const override {
     std::cout << "Node If " << std::endl;

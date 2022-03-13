@@ -20,9 +20,8 @@
 void CodeGen::SaveModule(std::string ModuleName) {
   std::error_code EC;
   llvm::raw_fd_ostream Outfile{ModuleName, EC};
-  if (EC) {
+  if (EC)
     llvm::errs() << EC.message().c_str() << "\n";
-  }
 
   Module_->print(Outfile, nullptr);
   Outfile.close();
