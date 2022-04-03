@@ -16,23 +16,23 @@
 #include <unordered_set>
 #include <vector>
 
-struct Z8 {
+struct Z7 {
   int val;
-  Z8(int v = 0) : val(v) {}
+  Z7(int v = 0) : val(v) {}
   operator int() const { return val; }
-  auto operator<=>(const Z8 &) const = default;
+  auto operator<=>(const Z7 &) const = default;
 };
 
 namespace std {
-template <> struct hash<Z8> {
-  std::size_t operator()(Z8 K) const {
+template <> struct hash<Z7> {
+  std::size_t operator()(Z7 K) const {
     std::hash<int> h;
     return h(K.val);
   }
 };
 } // namespace std
 
-Z8 operator*(Z8 lhs, Z8 rhs) { return {(lhs.val * rhs.val) % 8}; }
+Z7 operator*(Z7 lhs, Z7 rhs) { return {(lhs.val * rhs.val) % 7}; }
 
 template <typename T, typename RandIt>
 auto orbit(T num, RandIt gensbeg, RandIt gensend) {
@@ -43,7 +43,7 @@ auto orbit(T num, RandIt gensbeg, RandIt gensend) {
     orbit.insert(next.begin(), next.end());
     for (const auto &elem : next)
       for (auto igen = gensbeg; igen != gensend; ++igen)
-        if (auto newelem = *igen * elem; orbit.count(newelem) == 0) {
+        if (auto newelem = (*igen) * elem; orbit.count(newelem) == 0) {
           std::cout << elem << " * " << *igen << " = " << newelem << std::endl;
           tmp.push_back(newelem);
         }
@@ -53,12 +53,12 @@ auto orbit(T num, RandIt gensbeg, RandIt gensend) {
 }
 
 int main() {
-  std::vector gens = {Z8{3}, Z8{5}};
+  std::vector gens = {Z7{3}, Z7{5}};
   std::ostream_iterator<int> osit(std::cout, " ");
 
-  for (int n = 1; n < 8; ++n) {
+  for (int n = 1; n < 7; ++n) {
     std::cout << "Starting with " << n << std::endl;
-    auto orb = orbit(Z8{n}, gens.begin(), gens.end());
+    auto orb = orbit(Z7{n}, gens.begin(), gens.end());
     std::copy(orb.begin(), orb.end(), osit);
     std::cout << std::endl;
   }
