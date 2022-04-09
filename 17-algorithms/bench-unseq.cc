@@ -1,4 +1,15 @@
+//-----------------------------------------------------------------------------
+//
+// Source code for MIPT ILab
+// Slides: https://sourceforge.net/projects/cpp-lects-rus/files/cpp-graduate/
+// Licensed after GNU GPL v3
+//
+//------------------------------------------------------------------------------
+//
+// seq vs parunseq excution bench
 // https://quick-bench.com/q/af_lxuL36JnWXCG7GNXs59GjpTg
+//
+//------------------------------------------------------------------------------
 
 #include <algorithm>
 #include <chrono>
