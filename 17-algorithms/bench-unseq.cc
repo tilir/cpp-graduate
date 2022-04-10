@@ -59,13 +59,13 @@ int collatz(int n) {
 static void Sequenced() {
   std::unordered_multimap<int, int> m;
   for (int i = 0; i < SZ; ++i)
-    m.emplace(i % NKEYS, i);  
+    m.emplace(i % NKEYS, i);
   for (int state = 0; state < NMEASURES; ++state) {
     for (int i = 0; i < NKEYS; ++i) {
       auto [begin, end] = m.equal_range(i);
-      std::for_each(begin, end, [](auto &&elt) { 
-        elt.second = collatz(elt.second); });
-    } 
+      std::for_each(begin, end,
+                    [](auto &&elt) { elt.second = collatz(elt.second); });
+    }
   }
 }
 
@@ -75,9 +75,9 @@ static void Parunseq() {
     m.emplace(i % NKEYS, i);
   for (int state = 0; state < NMEASURES; ++state) {
     for (int i = 0; i < NKEYS; ++i) {
-      auto [begin, end] = m.equal_range(i);       
-      std::for_each(std::execution::par_unseq, begin, end, [](auto &&elt) {
-        elt.second = collatz(elt.second); });
+      auto [begin, end] = m.equal_range(i);
+      std::for_each(std::execution::par_unseq, begin, end,
+                    [](auto &&elt) { elt.second = collatz(elt.second); });
     }
   }
 }
