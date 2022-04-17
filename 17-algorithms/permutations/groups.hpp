@@ -35,10 +35,8 @@ auto orbit(T num, RandIt gensbeg, RandIt gensend) {
 
 // orbit with reps, using unordered maps
 template <typename T, typename RandIt>
-auto orbit_reps(T num, RandIt gensbeg, RandIt gensend, size_t to_reserve = 0) {
+auto orbit_reps(T num, RandIt gensbeg, RandIt gensend) {
   std::unordered_map<T, Permutation<T>> orbit, next{{num, {}}};
-  if (to_reserve)
-    orbit.reserve(to_reserve);
   while (!next.empty()) {
     std::unordered_map<T, Permutation<T>> tmp{};
     orbit.insert(next.begin(), next.end());
