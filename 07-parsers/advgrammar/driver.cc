@@ -22,4 +22,5 @@ int main() {
   yy::NumDriver driver(lexer);
   driver.parse();
   driver.printout();
+  delete lexer;
 }
