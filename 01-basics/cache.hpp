@@ -21,9 +21,9 @@ namespace caches {
 
 template <typename T, typename KeyT = int> struct cache_t {
   size_t sz_;
-  std::list<T> cache_;
+  std::list<std::pair<KeyT, T>> cache_;
 
-  using ListIt = typename std::list<T>::iterator;
+  using ListIt = typename std::list<std::pair<KeyT, T>>::iterator;
   std::unordered_map<KeyT, ListIt> hash_;
 
   cache_t(size_t sz) : sz_(sz) {}
@@ -34,10 +34,10 @@ template <typename T, typename KeyT = int> struct cache_t {
     auto hit = hash_.find(key);
     if (hit == hash_.end()) {
       if (full()) {
-        hash_.erase(cache_.back());
+        hash_.erase(cache_.back().first);
         cache_.pop_back();
       }
-      cache_.push_front(slow_get_page(key));
+      cache_.push_front({ key, slow_get_page(key) });
       hash_[key] = cache_.begin();
       return false;
     }
