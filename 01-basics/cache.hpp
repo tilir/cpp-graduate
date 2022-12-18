@@ -38,7 +38,7 @@ template <typename T, typename KeyT = int> struct cache_t {
         cache_.pop_back();
       }
       cache_.emplace_front(key, slow_get_page(key));
-      hash_[key] = cache_.begin();
+      hash_.emplace(key, cache_.begin());
       return false;
     }
 
