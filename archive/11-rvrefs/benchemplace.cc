@@ -27,8 +27,11 @@ struct Heavy {
   std::vector<int> v;
   Heavy(int n) : v(n) {}
   Heavy(const Heavy &rhs) : v(rhs.v) {}
-  Heavy &operator=(const Heavy &rhs) { v = rhs.v; return *this; }
-  
+  Heavy &operator=(const Heavy &rhs) {
+    v = rhs.v;
+    return *this;
+  }
+
   // inefective move-ctor
   Heavy(Heavy &&rhs) : v(rhs.v) {}
   Heavy &operator=(Heavy &&rhs) = delete;

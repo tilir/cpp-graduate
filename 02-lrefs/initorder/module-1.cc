@@ -11,15 +11,12 @@
 //
 //-----------------------------------------------------------------------------
 
-#include <iostream>
 #include "module.hh"
+#include <iostream>
 
 // two phases:
 // 1. static initialization a to 0 before program start
 // 2. dynamic initialization a to (b + 1) before main()
 int a = b + 1;
 
-int main()  {
-  std::cout << "a = " << a << "; b = " << b << std::endl;
-}
-
+int main() { std::cout << "a = " << a << "; b = " << b << std::endl; }

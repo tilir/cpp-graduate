@@ -1,7 +1,7 @@
-#include <iostream>
 #include "header.h"
+#include <iostream>
 
-int bar() { 
+int bar() {
   int x = static_inline();
   x += only_inline();
   x += only_static();

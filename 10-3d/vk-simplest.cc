@@ -568,7 +568,8 @@ void VkApp::create_render_pass() {
       vkCreateRenderPass(Device, &renderPassInfo, nullptr, &RenderPass));
 }
 
-// pipeline requires logical device, render pass, descriptor set layout and shader IDs
+// pipeline requires logical device, render pass, descriptor set layout and
+// shader IDs
 void VkApp::create_pipeline(VkShaderModule VertexID,
                             VkShaderModule FragmentID) {
   StoredVertexID = VertexID;

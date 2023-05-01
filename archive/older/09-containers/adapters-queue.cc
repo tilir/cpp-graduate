@@ -8,13 +8,13 @@ using std::cout;
 using std::deque;
 using std::endl;
 using std::priority_queue;
-using std::stack;
 using std::queue;
+using std::stack;
 
 void test_stack() {
   stack<SBT::rational_t> s;
   s.push(SBT::top());
-  while(!s.empty()) {
+  while (!s.empty()) {
     auto cur = s.top();
     s.pop();
     if ((cur.first < 4) && (cur.second < 4)) {
@@ -29,7 +29,7 @@ void test_stack() {
 void test_queue() {
   queue<SBT::rational_t> q;
   q.push(SBT::top());
-  while(!q.empty()) {
+  while (!q.empty()) {
     auto cur = q.front();
     q.pop();
     if ((cur.first < 4) && (cur.second < 4)) {
@@ -42,12 +42,13 @@ void test_queue() {
 }
 
 void test_priqueue() {
-  priority_queue<SBT::rational_t, deque<SBT::rational_t>, 
-                 SBT::Rational_Greater<SBT::rational_t>> pq;
+  priority_queue<SBT::rational_t, deque<SBT::rational_t>,
+                 SBT::Rational_Greater<SBT::rational_t>>
+      pq;
 
   queue<SBT::rational_t> q;
   q.push(SBT::top());
-  while(!q.empty()) {
+  while (!q.empty()) {
     auto cur = q.front();
     q.pop();
     if ((cur.first < 4) && (cur.second < 4)) {
@@ -65,8 +66,7 @@ void test_priqueue() {
   }
 }
 
-int
-main () {
+int main() {
   cout << "Stern -- Brocot tree using stack:" << endl;
   test_stack();
   cout << "Stern -- Brocot tree using queue:" << endl;

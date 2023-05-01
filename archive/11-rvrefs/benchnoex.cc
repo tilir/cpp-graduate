@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 //
 // Being noexcept is really important
-// Results on my computer: 
+// Results on my computer:
 // $ bench 10000000
 // Linear fill with noexcept: 2965
 // Linear fill without noexcept: 8176

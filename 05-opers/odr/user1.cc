@@ -1,6 +1,6 @@
 #include "header.h"
 
-int foo() { 
+int foo() {
   int x = static_inline();
   x += only_inline();
   x += only_static();
@@ -10,5 +10,3 @@ int foo() {
 #endif
   return x;
 }
-
-

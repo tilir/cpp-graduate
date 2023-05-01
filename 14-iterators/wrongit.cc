@@ -183,6 +183,9 @@ public:
     iterator(T *ptr) noexcept : ptr_(ptr) {}
 
   public:
+    using difference_type = int;
+    using iterator_category = std::bidirectional_iterator_tag;
+
     iterator(const iterator &) = default;
     iterator &operator=(const iterator &) = default;
     T &operator*() const noexcept { return *ptr_; }
@@ -205,12 +208,15 @@ public:
       return copy;
     }
     bool operator==(const iterator &second) const noexcept = default;
+    bool operator!=(const iterator &second) const noexcept = default;
   };
 
   class const_iterator final {
     iterator it_;
 
   public:
+    using difference_type = int;
+    using iterator_category = std::bidirectional_iterator_tag;
     const_iterator(const iterator &it) noexcept : it_(it) {}
     const_iterator(const const_iterator &) = default;
     const_iterator &operator=(const const_iterator &) = default;
@@ -229,6 +235,7 @@ public:
     const_iterator operator--(int) { return it_--; }
 
     bool operator==(const const_iterator &sd) const noexcept = default;
+    bool operator!=(const const_iterator &second) const noexcept = default;
   };
 
   iterator begin() noexcept { return iterator(data_); }

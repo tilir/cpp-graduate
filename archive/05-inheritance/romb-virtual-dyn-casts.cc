@@ -31,8 +31,8 @@ struct IOFile : public InputFile, public OutputFile {
   }
 };
 
-int main() {  
-  
+int main() {
+
   IOFile *piof = new IOFile{11};
   std::cout << std::hex << "piof = " << piof << ": " << std::dec;
   std::cout << piof->d << std::endl;
@@ -58,7 +58,7 @@ int main() {
   std::cout << piof->d << std::endl;
 
   delete piof;
-  
+
   pof = new OutputFile{13};
-  InputFile &rif = dynamic_cast<InputFile &>(*pof); // ?  
+  InputFile &rif = dynamic_cast<InputFile &>(*pof); // ?
 }

@@ -19,19 +19,20 @@ int gcd(int a, int b) {
 }
 
 auto to_contfrac(int x, int y) {
-  assert (y != 0);
+  assert(y != 0);
   vector<int> res;
   for (;;) {
     int i = x / y;
     res.push_back(i);
     int f = x % y;
-    if (f == 0) break;
+    if (f == 0)
+      break;
     x = y;
     y = f;
     auto cdiv = gcd(x, y);
     x /= cdiv;
     y /= cdiv;
-  } 
+  }
   return res;
 }
 
@@ -41,7 +42,7 @@ auto from_contfrac(vector<int> cf) {
   int y = 1;
   for (auto it = next(cf.rbegin()); it != cf.rend(); ++it) {
     int cur = *it;
-    tie(x, y) = make_pair(cur*x + y, x);
+    tie(x, y) = make_pair(cur * x + y, x);
     auto cdiv = gcd(x, y);
     x /= cdiv;
     y /= cdiv;
@@ -49,26 +50,23 @@ auto from_contfrac(vector<int> cf) {
   return make_pair(x, y);
 }
 
-template <typename T>
-auto rational_min(T x1, T x2) {
+template <typename T> auto rational_min(T x1, T x2) {
   double d1 = static_cast<double>(x1.first) / static_cast<double>(x1.second);
   double d2 = static_cast<double>(x2.first) / static_cast<double>(x2.second);
   if (d1 > d2)
     return x2;
   return x1;
-} 
+}
 
-template <typename T>
-auto rational_max(T x1, T x2) {
+template <typename T> auto rational_max(T x1, T x2) {
   double d1 = static_cast<double>(x1.first) / static_cast<double>(x1.second);
   double d2 = static_cast<double>(x2.first) / static_cast<double>(x2.second);
   if (d1 <= d2)
     return x2;
   return x1;
-} 
+}
 
-pair<rational_t, rational_t> 
-childs(rational_t cur) {
+pair<rational_t, rational_t> childs(rational_t cur) {
   auto cf = to_contfrac(cur.first, cur.second);
   auto cf2 = cf;
   // one child is [a0, ..., ak + 1]
@@ -81,5 +79,4 @@ childs(rational_t cur) {
   return make_pair(rational_min(elt1, elt2), rational_max(elt1, elt2));
 }
 
-
-}
+} // namespace SBT

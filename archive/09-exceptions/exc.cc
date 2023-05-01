@@ -22,9 +22,9 @@ int foo(int n) {
 
 int main() {
   foo(5);
-/*  
-  try {
-  } catch (...) {
-  }
-  */
+  /*
+    try {
+    } catch (...) {
+    }
+    */
 }

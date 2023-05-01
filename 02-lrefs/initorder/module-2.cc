@@ -17,4 +17,3 @@
 // 1. static initialization b to 0 before program start
 // 2. dynamic initialization b to (a + 1) before main()
 int b = a + 1;
-

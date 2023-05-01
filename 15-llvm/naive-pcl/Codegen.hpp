@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <map>
 #include <string>
 
 #include "llvm/ADT/APInt.h"
@@ -63,7 +64,8 @@ struct CodeGen {
   llvm::Value *AddDeclRead(std::string Varname) {
     auto *V = NamedValues_[Varname];
     assert(V);
-    return Builder_->CreateLoad(V, Varname.c_str());
+    auto *Ty = V->getType()->getPointerElementType();
+    return Builder_->CreateLoad(Ty, V, Varname.c_str());
   }
 
   llvm::Value *AddDeclWrite(std::string Varname, llvm::Value *Rhs) {

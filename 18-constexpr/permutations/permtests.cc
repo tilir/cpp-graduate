@@ -11,7 +11,7 @@ constexpr auto test_permloop_apply() {
 
   PermLoop<UD4, 4> PL = {4, 2, 1, 3};
   PL.apply(Init.begin(), Init.end());
-  
+
   return Init;
 }
 

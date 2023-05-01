@@ -29,10 +29,10 @@
 #include <glad/glad.h>
 // clang-format on
 
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
-#include <glm/gtx/string_cast.hpp>
 #include <GLFW/glfw3.h>
+#include <glm/ext.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 // initial window sizes
 constexpr int SZX = 600;

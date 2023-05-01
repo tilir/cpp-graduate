@@ -31,11 +31,11 @@ void foo(T x) {
 
 // constraints: ok
 
-template <typename T> requires(sizeof(T) > 4) void foo(T x) {
-  std::cout << "For large" << std::endl;
-}
+template <typename T>
+requires(sizeof(T) > 4) void foo(T x) { std::cout << "For large" << std::endl; }
 
-template <typename T> requires(sizeof(T) <= 4) void foo(T x) {
+template <typename T>
+requires(sizeof(T) <= 4) void foo(T x) {
   std::cout << "For small" << std::endl;
 }
 

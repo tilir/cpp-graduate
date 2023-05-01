@@ -1,7 +1,7 @@
 #include <iostream>
 
 int main() {
-  int n, cmax = 0, xmax = 0;  
+  int n, cmax = 0, xmax = 0;
   std::cin >> n;
   for (int x = 2; x < n; ++x) {
     int y = x;
@@ -20,4 +20,3 @@ int main() {
   }
   std::cout << xmax << std::endl << cmax << std::endl;
 }
-

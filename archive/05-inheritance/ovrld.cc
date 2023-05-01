@@ -1,8 +1,8 @@
 #include <iostream>
 
 struct Base {
-  virtual int foo(int) { return 10; } 
-  virtual int foo(double) { return 20; } 
+  virtual int foo(int) { return 10; }
+  virtual int foo(double) { return 20; }
 };
 
 struct Derived : Base {
@@ -14,4 +14,3 @@ int main() {
   Derived d;
   std::cout << d.foo(1.0) << std::endl;
 }
-

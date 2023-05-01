@@ -1,18 +1,18 @@
 // compile with: g++ --std=c++17 07-poluslo-fs.cc
 #include <algorithm>
-#include <iostream>
-#include <iomanip>
 #include <filesystem>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <string>
 
 namespace fs = std::filesystem;
 
 const size_t NROWS = 10;
 const size_t ROWSIZE = 16;
-const char * FNAME = "poluslo.jpg";
+const char *FNAME = "poluslo.jpg";
 
-int main() {  
+int main() {
   fs::path p = fs::current_path() / FNAME;
   size_t sz = fs::file_size(p);
   std::cout << "File size = " << sz << std::endl;
@@ -24,7 +24,7 @@ int main() {
   std::ifstream f(FNAME, std::ifstream::binary);
   size_t nrows = 0;
   size_t printrow = 0;
-  for(;;) {
+  for (;;) {
     unsigned char next;
     f >> std::noskipws >> next;
     if (!f.good())

@@ -18,8 +18,8 @@
 #define MYVERSION 210
 #include "cl_selector.hpp"
 
-#include "cl_defs.h"
 #include "CL/opencl.hpp"
+#include "cl_defs.h"
 
 #define STRINGIFY(...) #__VA_ARGS__
 
