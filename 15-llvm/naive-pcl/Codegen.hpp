@@ -64,7 +64,7 @@ struct CodeGen {
   llvm::Value *AddDeclRead(std::string Varname) {
     auto *V = NamedValues_[Varname];
     assert(V);
-    auto *Ty = V->getType()->getPointerElementType();
+    auto *Ty = static_cast<llvm::AllocaInst *>(V)->getAllocatedType();
     return Builder_->CreateLoad(Ty, V, Varname.c_str());
   }
 
@@ -83,17 +83,15 @@ struct CodeGen {
   }
 
   llvm::BasicBlock *StartIf(llvm::Value *CondV) {
-    llvm::BasicBlock *ThenBB = llvm::BasicBlock::Create(Context_, "then");
-    llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(Context_, "endif");
+    llvm::BasicBlock *ThenBB = llvm::BasicBlock::Create(Context_, "then", Function_);
+    llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(Context_, "endif", Function_);
     Builder_->CreateCondBr(CondV, ThenBB, MergeBB);
-    Function_->getBasicBlockList().push_back(ThenBB);
     Builder_->SetInsertPoint(ThenBB);
     return MergeBB;
   }
 
   void EndIf(llvm::BasicBlock *MergeBB) {
     // assume we are now in ThenBB
-    Function_->getBasicBlockList().push_back(MergeBB);
     Builder_->CreateBr(MergeBB);
     Builder_->SetInsertPoint(MergeBB);
   }
@@ -101,17 +99,15 @@ struct CodeGen {
   using WhileBlocksTy = std::pair<llvm::BasicBlock *, llvm::BasicBlock *>;
 
   WhileBlocksTy StartWhile(llvm::Value *CondV) {
-    llvm::BasicBlock *BodyBB = llvm::BasicBlock::Create(Context_, "body");
-    llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(Context_, "endwhile");
+    llvm::BasicBlock *BodyBB = llvm::BasicBlock::Create(Context_, "body", Function_);
+    llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(Context_, "endwhile", Function_);
     Builder_->CreateCondBr(CondV, BodyBB, MergeBB);
-    Function_->getBasicBlockList().push_back(BodyBB);
     Builder_->SetInsertPoint(BodyBB);
     return std::make_pair(BodyBB, MergeBB);
   }
 
   void EndWhile(llvm::Value *CondV, WhileBlocksTy BBs) {
     // assume we are now inside body
-    Function_->getBasicBlockList().push_back(BBs.second);
     Builder_->CreateCondBr(CondV, BBs.first, BBs.second);
     Builder_->SetInsertPoint(BBs.second);
   }
