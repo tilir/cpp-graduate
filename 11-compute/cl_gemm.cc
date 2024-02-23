@@ -24,6 +24,7 @@
 #include <cassert>
 #include <charconv>
 #include <chrono>
+#include <sstream>
 #include <fstream>
 #include <iostream>
 #include <numeric>
