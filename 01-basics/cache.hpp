@@ -15,7 +15,6 @@
 #include <iterator>
 #include <list>
 #include <unordered_map>
-#include <vector>
 
 namespace caches {
 
