@@ -41,8 +41,7 @@ template <typename T, typename KeyT = int> struct cache_t {
     }
 
     auto eltit = hit->second;
-    if (eltit != cache_.begin())
-      cache_.splice(cache_.begin(), cache_, eltit);
+    cache_.splice(cache_.begin(), cache_, eltit);
     return true;
   }
 };
