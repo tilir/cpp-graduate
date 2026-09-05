@@ -1,0 +1,5 @@
+/lru
+/src/*.o
+/src/*.d
+/tests/test_components
+__pycache__/
