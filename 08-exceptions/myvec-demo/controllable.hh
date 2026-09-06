@@ -1,17 +1,17 @@
 #pragma once
 
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <utility>
 
-struct Controllable {
+struct Controllable final {
   static int control;
-  int *resource_;
+  std::unique_ptr<int> resource_;
   Controllable() : resource_(new int(42)) {}
 
-  Controllable(Controllable &&rhs) noexcept : resource_(rhs.resource_) {
-    rhs.resource_ = nullptr;
-  }
+  Controllable(Controllable &&rhs) noexcept
+      : resource_(std::move(rhs.resource_)) {}
   Controllable &operator=(Controllable &&rhs) noexcept {
     std::swap(resource_, rhs.resource_);
     return *this;
@@ -30,5 +30,5 @@ struct Controllable {
     return *this;
   }
 
-  ~Controllable() { delete resource_; }
+  ~Controllable() = default;
 };
