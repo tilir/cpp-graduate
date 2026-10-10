@@ -13,6 +13,7 @@
 //
 //------------------------------------------------------------------------------
 
+#include <algorithm>
 #include <benchmark/benchmark.h>
 #include <concepts>
 #include <random>

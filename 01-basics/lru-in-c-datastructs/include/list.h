@@ -7,7 +7,7 @@
  * payload. Removing a link requires membership; insertion requires detachment.
  * Lists and linked objects must not be copied or moved in memory. */
 typedef struct ListLink {
-    struct ListLink *prev, *next;
+  struct ListLink *prev, *next;
 } ListLink;
 
 void list_init(ListLink *link);

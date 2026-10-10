@@ -31,6 +31,7 @@
 #ifndef PERMLOOPS_GUARD_
 #define PERMLOOPS_GUARD_
 
+#include "permcommon.hpp"
 #include <algorithm>
 #include <cassert>
 #include <iostream>
@@ -40,8 +41,6 @@
 #include <string>
 #include <unordered_set>
 #include <vector>
-
-#include "permcommon.hpp"
 
 //------------------------------------------------------------------------------
 //

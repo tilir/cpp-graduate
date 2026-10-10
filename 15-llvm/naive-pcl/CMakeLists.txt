@@ -16,7 +16,7 @@ cmake_minimum_required(VERSION 3.13.4)
 project(ParaCL)
 
 find_package(BISON REQUIRED)
-find_package(FLEX REQUIRED)
+include("${CMAKE_CURRENT_LIST_DIR}/../../cmake/FlexLexer.cmake")
 find_package(LLVM REQUIRED CONFIG)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
@@ -35,9 +35,13 @@ flex_target(scanner
 bison_target(parser
   compiler.y
   ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp
-  COMPILE_FLAGS "--defines=${CMAKE_CURRENT_BINARY_DIR}/compiler.cpp.h")
+  DEFINES_FILE "${CMAKE_CURRENT_BINARY_DIR}/compiler.cpp.h")
 
 add_flex_bison_dependency(scanner parser)
+
+# driver.cc pulls the generated header via parser.hpp
+set_source_files_properties(driver.cc PROPERTIES
+  OBJECT_DEPENDS "${BISON_parser_OUTPUT_HEADER}")
 
 add_executable(${COMPILE_NAME} 
   driver.cc
@@ -73,7 +77,7 @@ llvm_map_components_to_libnames(llvm_libs support core codegen irreader)
 foreach(TNAME ${TARGETS})
   target_compile_features(${TNAME} PRIVATE cxx_std_17)
   target_include_directories(${TNAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-  target_include_directories(${TNAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+  target_include_directories(${TNAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${FLEX_INCLUDE_DIRS})
   target_include_directories(${TNAME} PRIVATE ${LLVM_INCLUDE_DIRS})
   target_link_libraries(${TNAME} ${llvm_libs})
 endforeach()

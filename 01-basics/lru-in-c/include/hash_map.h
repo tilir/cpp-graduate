@@ -9,9 +9,9 @@ typedef struct HashMap HashMap;
 typedef int64_t HashMapKey;
 typedef void *HashMapValue;
 typedef enum {
-    HASH_MAP_INSERTED,
-    HASH_MAP_DUPLICATE,
-    HASH_MAP_NO_MEMORY
+  HASH_MAP_INSERTED,
+  HASH_MAP_DUPLICATE,
+  HASH_MAP_NO_MEMORY
 } HashMapResult;
 
 /* Map owns internal entries, caller owns values. bucket_count must be positive.

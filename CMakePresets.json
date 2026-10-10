@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": { "major": 3, "minor": 20, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "gcc15",
+      "displayName": "GCC 15 (Release)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/gcc15",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "gcc-15",
+        "CMAKE_CXX_COMPILER": "g++-15"
+      }
+    },
+    {
+      "name": "clang21",
+      "displayName": "Clang 21 (Release)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/clang21",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "clang-21",
+        "CMAKE_CXX_COMPILER": "clang++-21"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "gcc15", "configurePreset": "gcc15" },
+    { "name": "clang21", "configurePreset": "clang21" }
+  ],
+  "testPresets": [
+    { "name": "gcc15", "configurePreset": "gcc15", "output": { "outputOnFailure": true } },
+    { "name": "clang21", "configurePreset": "clang21", "output": { "outputOnFailure": true } }
+  ]
+}

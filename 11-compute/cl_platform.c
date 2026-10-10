@@ -12,14 +12,13 @@
 //
 //-----------------------------------------------------------------------------
 
-#include <assert.h>
-#include <stdio.h>
-
 #ifndef CL_TARGET_OPENCL_VERSION
 #define CL_TARGET_OPENCL_VERSION 120
 #endif
 
 #include "CL/cl.h"
+#include <assert.h>
+#include <stdio.h>
 
 struct platforms_t {
   cl_uint n;

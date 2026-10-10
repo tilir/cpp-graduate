@@ -43,7 +43,8 @@ std::ostream &operator<<(std::ostream &out, std::output_iterator_tag) {
 }
 
 template <typename Iter> void print_iterator_type() {
-  std::cout << typename iterator_traits<Iter>::iterator_category{} << std::endl;
+  std::cout << typename std::iterator_traits<Iter>::iterator_category{}
+            << std::endl;
 }
 
 int main() {

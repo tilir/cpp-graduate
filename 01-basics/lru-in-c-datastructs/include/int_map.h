@@ -9,15 +9,15 @@
  * Caller owns entries and values and must keep their addresses stable.
  * Initialize entries to zero. Do not modify keys while linked. */
 typedef struct IntMapEntry {
-    int64_t key;
-    void *value;
-    struct IntMapEntry *next;
-    struct IntMapEntry **prev_next;
+  int64_t key;
+  void *value;
+  struct IntMapEntry *next;
+  struct IntMapEntry **prev_next;
 } IntMapEntry;
 
 typedef struct {
-    IntMapEntry **buckets;
-    size_t bucket_count;
+  IntMapEntry **buckets;
+  size_t bucket_count;
 } IntMap;
 
 /* Initialize once before use. Failure leaves an empty, destroyable map. */

@@ -10,15 +10,14 @@
 //
 //------------------------------------------------------------------------------
 
+#include "Codegen.hpp"
+#include "parser.hpp"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <memory>
 #include <string>
-
-#include "Codegen.hpp"
-#include "parser.hpp"
 
 Node::IScope *CurrentScope = nullptr;
 std::unique_ptr<CodeGen> GlobalGen = nullptr;

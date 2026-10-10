@@ -10,14 +10,13 @@
 //
 //------------------------------------------------------------------------------
 
-#include <iostream>
-#include <iterator>
-#include <vector>
-
 #include "groups.hpp"
 #include "idomain.hpp"
 #include "permloops.hpp"
 #include "perms.hpp"
+#include <iostream>
+#include <iterator>
+#include <vector>
 
 // permutation loops application:
 // (1, 2) applied to [1, 2, 3, 4] yields [2, 1, 3, 4]

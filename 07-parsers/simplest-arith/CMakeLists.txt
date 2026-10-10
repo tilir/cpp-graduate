@@ -18,10 +18,10 @@ cmake_minimum_required(VERSION 3.13.4)
 project(Simplest)
 
 find_package(BISON REQUIRED)
-find_package(FLEX REQUIRED)
+include("${CMAKE_CURRENT_LIST_DIR}/../../cmake/FlexLexer.cmake")
 
 if (NOT DEFINED GRAMMAR)
-  set(GRAMMAR "simplest-lr.yy" CACHE STRING "file with grammar" FORCE)
+  set(GRAMMAR "simplest-lr.yy")
 endif()
 
 flex_target(scanner
@@ -32,9 +32,13 @@ flex_target(scanner
 bison_target(parser
   ${GRAMMAR}
   ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
-  COMPILE_FLAGS "--defines=${CMAKE_CURRENT_BINARY_DIR}/simplest.tab.hh")
+  DEFINES_FILE "${CMAKE_CURRENT_BINARY_DIR}/simplest.tab.hh")
 
 add_flex_bison_dependency(scanner parser)
+
+# simplest.cc pulls the generated header via driver.hpp
+set_source_files_properties(simplest.cc PROPERTIES
+  OBJECT_DEPENDS "${BISON_parser_OUTPUT_HEADER}")
 
 add_executable(${PROJECT_NAME} 
   simplest.cc  
@@ -49,6 +53,6 @@ set(TARGETS
 foreach(TNAME ${TARGETS})
   target_compile_features(${TNAME} PRIVATE cxx_std_20)
   target_include_directories(${TNAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-  target_include_directories(${TNAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+  target_include_directories(${TNAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${FLEX_INCLUDE_DIRS})
 endforeach()
 

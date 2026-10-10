@@ -10,6 +10,7 @@
 //
 //------------------------------------------------------------------------------
 
+#include <climits>
 #include <iostream>
 
 static inline constexpr size_t static_log(size_t N) {

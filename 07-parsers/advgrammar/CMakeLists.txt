@@ -15,10 +15,10 @@
 
 
 cmake_minimum_required(VERSION 3.13.4)
-project(numgrammar)
+project(advgrammar)
 
 find_package(BISON REQUIRED)
-find_package(FLEX REQUIRED)
+include("${CMAKE_CURRENT_LIST_DIR}/../../cmake/FlexLexer.cmake")
 
 flex_target(scanner
   numgrammar.l
@@ -28,9 +28,13 @@ flex_target(scanner
 bison_target(parser
   numgrammar.y
   ${CMAKE_CURRENT_BINARY_DIR}/parser.cc
-  COMPILE_FLAGS "--defines=${CMAKE_CURRENT_BINARY_DIR}/numgrammar.tab.hh")
+  DEFINES_FILE "${CMAKE_CURRENT_BINARY_DIR}/numgrammar.tab.hh")
 
 add_flex_bison_dependency(scanner parser)
+
+# driver.cc pulls the generated header via numdriver.hpp
+set_source_files_properties(driver.cc PROPERTIES
+  OBJECT_DEPENDS "${BISON_parser_OUTPUT_HEADER}")
 
 add_executable(${PROJECT_NAME} 
   driver.cc  
@@ -40,4 +44,4 @@ add_executable(${PROJECT_NAME}
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} ${FLEX_INCLUDE_DIRS})

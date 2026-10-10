@@ -10,11 +10,11 @@
 //
 //----------------------------------------------------------------------------
 
+#include "lingeo.hpp"
+
 #include <cassert>
 #include <iostream>
 #include <vector>
-
-#include "lingeo.hpp"
 
 polygon_t input_triangle() {
   std::vector<point_t> verts(3);

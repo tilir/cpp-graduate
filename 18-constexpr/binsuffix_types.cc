@@ -27,7 +27,9 @@ template <int Sum, char... Rest> struct binparser<Sum, '1', Rest...> {
 };
 
 // end recursion
-template <int Sum> struct binparser<Sum> { static constexpr int value = Sum; };
+template <int Sum> struct binparser<Sum> {
+  static constexpr int value = Sum;
+};
 
 // binary suffix
 template <char... Chars> constexpr int operator"" _binary() {

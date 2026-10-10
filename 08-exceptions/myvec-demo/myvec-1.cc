@@ -13,12 +13,11 @@
 //
 //----------------------------------------------------------------------------
 
+#include "controllable.hh"
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
 #include <utility>
-
-#include "controllable.hh"
 
 int Controllable::control = 5;
 

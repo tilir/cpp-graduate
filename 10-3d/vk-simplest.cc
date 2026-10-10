@@ -17,6 +17,7 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <fstream>
@@ -27,6 +28,7 @@
 #include <stdexcept>
 #include <vector>
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/ext.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtx/string_cast.hpp>

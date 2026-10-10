@@ -12,12 +12,11 @@
 //
 //----------------------------------------------------------------------------
 
+#include "controllable.hh"
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
 #include <utility>
-
-#include "controllable.hh"
 
 int Controllable::control = 5;
 
@@ -71,13 +70,13 @@ public:
 
   T top() const {
     if (used_ < 1)
-      throw std::out_of_range{};
+      throw std::out_of_range{"top on empty vector"};
     return arr_[used_ - 1];
   }
 
   void pop() {
     if (used_ < 1)
-      throw std::underflow_error{};
+      throw std::underflow_error{"pop on empty vector"};
     used_ -= 1;
   }
 

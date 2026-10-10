@@ -35,8 +35,8 @@ protected:
   VectorStorage() = default;
 
   VectorStorage(size_t allocSize)
-      : allocated_(allocSize), data_{static_cast<T *>(
-                                   ::operator new(sizeof(T) * allocSize))} {}
+      : allocated_(allocSize),
+        data_{static_cast<T *>(::operator new(sizeof(T) * allocSize))} {}
 
   VectorStorage(VectorStorage &&toMove) noexcept {
     std::swap(allocated_, toMove.allocated_);

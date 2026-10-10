@@ -13,9 +13,7 @@
 
 #pragma once
 
-#include <map>
-#include <string>
-
+#include "INode.hpp"
 #include "llvm/ADT/APInt.h"
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/Constants.h"
@@ -36,8 +34,8 @@
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/Transforms/Scalar/GVN.h"
 #include "llvm/Transforms/Utils.h"
-
-#include "INode.hpp"
+#include <map>
+#include <string>
 
 struct CodeGen {
   llvm::LLVMContext Context_;
@@ -83,8 +81,10 @@ struct CodeGen {
   }
 
   llvm::BasicBlock *StartIf(llvm::Value *CondV) {
-    llvm::BasicBlock *ThenBB = llvm::BasicBlock::Create(Context_, "then", Function_);
-    llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(Context_, "endif", Function_);
+    llvm::BasicBlock *ThenBB =
+        llvm::BasicBlock::Create(Context_, "then", Function_);
+    llvm::BasicBlock *MergeBB =
+        llvm::BasicBlock::Create(Context_, "endif", Function_);
     Builder_->CreateCondBr(CondV, ThenBB, MergeBB);
     Builder_->SetInsertPoint(ThenBB);
     return MergeBB;
@@ -99,8 +99,10 @@ struct CodeGen {
   using WhileBlocksTy = std::pair<llvm::BasicBlock *, llvm::BasicBlock *>;
 
   WhileBlocksTy StartWhile(llvm::Value *CondV) {
-    llvm::BasicBlock *BodyBB = llvm::BasicBlock::Create(Context_, "body", Function_);
-    llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(Context_, "endwhile", Function_);
+    llvm::BasicBlock *BodyBB =
+        llvm::BasicBlock::Create(Context_, "body", Function_);
+    llvm::BasicBlock *MergeBB =
+        llvm::BasicBlock::Create(Context_, "endwhile", Function_);
     Builder_->CreateCondBr(CondV, BodyBB, MergeBB);
     Builder_->SetInsertPoint(BodyBB);
     return std::make_pair(BodyBB, MergeBB);

@@ -10,12 +10,11 @@
 //
 //------------------------------------------------------------------------------
 
+#include "Codegen.hpp"
+#include "INode.hpp"
 #include <iostream>
 #include <stdexcept>
 #include <string>
-
-#include "Codegen.hpp"
-#include "INode.hpp"
 
 void CodeGen::SaveModule(std::string ModuleName) {
   std::error_code EC;

@@ -12,16 +12,15 @@
 //
 //-----------------------------------------------------------------------------
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #ifndef CL_TARGET_OPENCL_VERSION
 #define CL_TARGET_OPENCL_VERSION 120
 #endif
 
 #include "CL/cl.h"
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 static void cl_notify_fn(const char *errinfo, const void *private_info,
                          size_t cb, void *user_data);

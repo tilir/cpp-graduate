@@ -52,16 +52,56 @@ constexpr float RadiusDelta = 0.02f;
 GLfloat Vertices[] = {
     // positions        // colors
     // for +Z (cube front)
-    -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f,  // top left (-X, +Y)
-    0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,   // top right (+X, +Y)
-    0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f,  // bottom right (+X, -Y)
-    -0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 0.0f, // bottom left (-X, -Y)
+    -0.5f,
+    0.5f,
+    0.5f,
+    0.0f,
+    0.0f,
+    0.0f, // top left (-X, +Y)
+    0.5f,
+    0.5f,
+    0.5f,
+    0.0f,
+    1.0f,
+    0.0f, // top right (+X, +Y)
+    0.5f,
+    -0.5f,
+    0.5f,
+    1.0f,
+    0.0f,
+    0.0f, // bottom right (+X, -Y)
+    -0.5f,
+    -0.5f,
+    0.5f,
+    1.0f,
+    1.0f,
+    0.0f, // bottom left (-X, -Y)
 
     // for -Z (cube back)
-    -0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 0.0f,  // top left (-X, +Y)
-    0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f,   // top right (+X, +Y)
-    0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,  // bottom right (+X, -Y)
-    -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left (-X, -Y)
+    -0.5f,
+    0.5f,
+    -0.5f,
+    1.0f,
+    1.0f,
+    0.0f, // top left (-X, +Y)
+    0.5f,
+    0.5f,
+    -0.5f,
+    1.0f,
+    0.0f,
+    0.0f, // top right (+X, +Y)
+    0.5f,
+    -0.5f,
+    -0.5f,
+    0.0f,
+    1.0f,
+    0.0f, // bottom right (+X, -Y)
+    -0.5f,
+    -0.5f,
+    -0.5f,
+    0.0f,
+    0.0f,
+    0.0f, // bottom left (-X, -Y)
 };
 
 // cube sides to render

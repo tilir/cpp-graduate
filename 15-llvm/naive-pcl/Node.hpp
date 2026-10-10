@@ -12,14 +12,13 @@
 
 #pragma once
 
+#include "Codegen.hpp"
+#include "INode.hpp"
 #include <iostream>
 #include <map>
 #include <string>
 #include <typeinfo>
 #include <vector>
-
-#include "Codegen.hpp"
-#include "INode.hpp"
 
 namespace Node {
 
@@ -51,7 +50,7 @@ class Decl final : public INode {
 public:
   Decl(const std::string &Name) : Varname_(Name) {}
   int calc() override { return Val_; }
-  llvm::Value *codegen() { return GlobalGen->AddDeclRead(Varname_); }
+  llvm::Value *codegen() override { return GlobalGen->AddDeclRead(Varname_); }
   llvm::Value *assign(llvm::Value *Rhs) {
     return GlobalGen->AddDeclWrite(Varname_, Rhs);
   }
@@ -91,7 +90,7 @@ public:
 
   // IScope interface
 public:
-  IScope *push() { return new Scope(this); }
+  IScope *push() override { return new Scope(this); }
   IScope *resetScope() const override { return PrevScope_; }
   void addBranch(INode *Branch) override { Branches_.push_back(Branch); }
   INode *access(const std::string &VarName) override;

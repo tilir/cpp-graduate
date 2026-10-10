@@ -31,14 +31,13 @@
 
 #pragma once
 
+#include "permcommon.hpp"
+#include "permloops.hpp"
 #include <algorithm>
 #include <initializer_list>
 #include <iostream>
 #include <iterator>
 #include <vector>
-
-#include "permcommon.hpp"
-#include "permloops.hpp"
 
 //------------------------------------------------------------------------------
 //

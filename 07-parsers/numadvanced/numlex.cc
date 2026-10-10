@@ -10,10 +10,9 @@
 //
 //----------------------------------------------------------------------------
 
+#include "numlexer.hpp"
 #include <iostream>
 #include <memory>
-
-#include "numlexer.hpp"
 
 int yyFlexLexer::yywrap() { return 1; }
 

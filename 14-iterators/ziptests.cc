@@ -13,11 +13,10 @@
 //
 //-----------------------------------------------------------------------------
 
+#include "ziprange.hpp"
 #include <cassert>
 #include <iostream>
 #include <vector>
-
-#include "ziprange.hpp"
 
 int main() {
   std::vector<bool> b = {false, false, true, false};
@@ -36,7 +35,7 @@ int main() {
   for (auto &&both : itertools::make_zip_range(k, v))
     std::cout << both.first << " " << both.second << "\n";
 
-    // 3. wrong iterators don't work
+  // 3. wrong iterators don't work
 #ifdef BAD
   auto osit = std::ostream_iterator<int>{std::cout};
   auto wit = itertools::make_zip_iterator(osit, b.begin());

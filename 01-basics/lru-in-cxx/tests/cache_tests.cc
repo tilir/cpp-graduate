@@ -1,7 +1,7 @@
 #include "cache.hpp"
 
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 #include <string>
 
 void check(bool condition) {
@@ -47,7 +47,9 @@ int main() {
   check(empty.cache_.empty() && empty.hash_.empty());
 
   caches::cache_t<int, std::string> generic{1};
-  auto string_loader = [](std::string key) { return static_cast<int>(key.size()); };
+  auto string_loader = [](std::string key) {
+    return static_cast<int>(key.size());
+  };
   check(!generic.lookup_update("answer", string_loader));
   check(generic.lookup_update("answer", string_loader));
   check(generic.cache_.front().second == 6);

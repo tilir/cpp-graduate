@@ -10,13 +10,12 @@
 //
 //------------------------------------------------------------------------------
 
+#include "Node.hpp"
+#include "Codegen.hpp"
+#include "Symtab.hpp"
 #include <map>
 #include <stdexcept>
 #include <string>
-
-#include "Codegen.hpp"
-#include "Node.hpp"
-#include "Symtab.hpp"
 
 Symtab GlobalTable;
 

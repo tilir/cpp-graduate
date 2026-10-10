@@ -10,9 +10,8 @@
 //
 //----------------------------------------------------------------------------
 
-#include <iostream>
-
 #include "numdriver.hpp"
+#include <iostream>
 
 // here we can return non-zero if lexing is not done inspite of EOF detected
 int yyFlexLexer::yywrap() { return 1; }

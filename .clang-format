@@ -1,0 +1,11 @@
+BasedOnStyle: LLVM
+IndentWidth: 2
+ColumnLimit: 80
+IncludeBlocks: Preserve
+IncludeCategories:
+  - Regex: '^"'
+    Priority: 1
+  - Regex: '^<'
+    Priority: 2
+# Preserve deliberate multi-line lecture banners.
+ReflowComments: false

@@ -12,10 +12,9 @@
 
 #pragma once
 
+#include "perms.hpp"
 #include <unordered_map>
 #include <unordered_set>
-
-#include "perms.hpp"
 
 // simple orbit, using unordered sets
 template <typename T, typename RandIt>

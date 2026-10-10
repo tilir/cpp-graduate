@@ -13,7 +13,9 @@
 #include <cmath>
 #include <iostream>
 
-template <typename T> struct Point { T x, y; };
+template <typename T> struct Point {
+  T x, y;
+};
 
 template <typename U> struct Triangle {
   Point<U> pts[3];

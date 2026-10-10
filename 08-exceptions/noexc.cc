@@ -16,7 +16,7 @@
 struct DefaultCtor {};
 
 struct ThrowingCtor {
-  ThrowingCtor(){}; // =default will create noexcept one
+  ThrowingCtor() {}; // =default will create noexcept one
   ThrowingCtor(const ThrowingCtor &) = default;
   ThrowingCtor(ThrowingCtor &&) = default;
 };

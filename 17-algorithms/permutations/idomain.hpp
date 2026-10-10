@@ -18,7 +18,9 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <iostream>
+#include <numeric>
 #include <stdexcept>
 #include <string>
 #include <vector>

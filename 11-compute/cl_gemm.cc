@@ -20,21 +20,6 @@
 //
 //-----------------------------------------------------------------------------
 
-#include <algorithm>
-#include <cassert>
-#include <charconv>
-#include <chrono>
-#include <sstream>
-#include <fstream>
-#include <iostream>
-#include <numeric>
-#include <random>
-#include <stdexcept>
-#include <string>
-#include <string_view>
-#include <system_error>
-#include <vector>
-
 #ifndef CL_HPP_TARGET_OPENCL_VERSION
 #define CL_HPP_MINIMUM_OPENCL_VERSION 120
 #define CL_HPP_TARGET_OPENCL_VERSION 120
@@ -44,6 +29,20 @@
 #define CL_HPP_ENABLE_EXCEPTIONS
 
 #include "CL/opencl.hpp"
+#include <algorithm>
+#include <cassert>
+#include <charconv>
+#include <chrono>
+#include <fstream>
+#include <iostream>
+#include <numeric>
+#include <random>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <string_view>
+#include <system_error>
+#include <vector>
 
 #ifndef COMPARE_CPU
 #define COMPARE_CPU 1

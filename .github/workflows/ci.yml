@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.preset }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        preset: [gcc15, clang21]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install GCC 15 and LLVM 21
+        run: |
+          sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt-get install -y gcc-15 g++-15
+          curl -fsSL https://apt.llvm.org/llvm.sh -o /tmp/llvm.sh
+          sudo bash /tmp/llvm.sh 21
+          sudo apt-get install -y llvm-21-dev clang-format-21 libclang-21-dev
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get install -y \
+            cmake ninja-build bison flex libfl-dev ruby python3 \
+            libbenchmark-dev ocl-icd-opencl-dev opencl-clhpp-headers \
+            libvulkan-dev libglm-dev libglfw3-dev
+
+      - name: Configure
+        run: >-
+          cmake --preset ${{ matrix.preset }}
+          -DLLVM_DIR=/usr/lib/llvm-21/lib/cmake/llvm
+          -DREQUIRE_LLVM=ON -DENABLE_FORMAT_CHECK=ON
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.preset }} --parallel 2
+
+      - name: Test
+        run: ctest --preset ${{ matrix.preset }} --parallel 2
+
+      # IWYU must use the same Clang version as the LLVM headers it analyzes.
+      - name: Build IWYU 0.25 for Clang 21
+        if: matrix.preset == 'clang21'
+        run: |
+          curl -fsSL https://include-what-you-use.org/downloads/include-what-you-use-0.25.src.tar.gz -o /tmp/iwyu.tar.gz
+          tar -xzf /tmp/iwyu.tar.gz -C /tmp
+          cmake -S /tmp/include-what-you-use -B /tmp/iwyu-build \
+            -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++-21 \
+            -DCMAKE_PREFIX_PATH=/usr/lib/llvm-21
+          cmake --build /tmp/iwyu-build --parallel 2
+
+      - name: Collect IWYU advice
+        if: matrix.preset == 'clang21'
+        run: |
+          cmake -S . -B build-iwyu -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER=clang-21 -DCMAKE_CXX_COMPILER=clang++-21 \
+            -DLLVM_DIR=/usr/lib/llvm-21/lib/cmake/llvm -DREQUIRE_LLVM=ON \
+            -DENABLE_IWYU=ON -DIWYU_EXECUTABLE=/tmp/iwyu-build/bin/include-what-you-use
+          # Advice is advisory; compilation and tests remain mandatory.
+          cmake --build build-iwyu --parallel 2 2>&1 | tee iwyu.log
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagnostics-${{ matrix.preset }}
+          path: |
+            build/${{ matrix.preset }}/Testing/Temporary/LastTest.log
+            build/${{ matrix.preset }}/Testing/Temporary/LastTestsFailed.log
+            iwyu.log
+          if-no-files-found: ignore

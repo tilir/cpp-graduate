@@ -1,0 +1,11 @@
+# Build artifacts
+build/
+build-*/
+*.o
+*.pcl.ll
+a.out
+
+# Built example binaries
+01-basics/lru-in-c/lru
+01-basics/lru-in-c-datastructs/lru
+01-basics/lru-in-c-naive/lru

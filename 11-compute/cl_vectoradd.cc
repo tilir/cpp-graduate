@@ -12,12 +12,6 @@
 //
 //-----------------------------------------------------------------------------
 
-#include <algorithm>
-#include <iostream>
-#include <numeric>
-#include <stdexcept>
-#include <vector>
-
 #ifndef CL_HPP_TARGET_OPENCL_VERSION
 #define CL_HPP_MINIMUM_OPENCL_VERSION 120
 #define CL_HPP_TARGET_OPENCL_VERSION 120
@@ -27,6 +21,11 @@
 #define CL_HPP_ENABLE_EXCEPTIONS
 
 #include "CL/opencl.hpp"
+#include <algorithm>
+#include <iostream>
+#include <numeric>
+#include <stdexcept>
+#include <vector>
 
 #ifndef ANALYZE
 #define ANALYZE 1

@@ -26,7 +26,7 @@ concept WeaklyEqualityComparableWith = requires(
 };
 
 template <typename T, typename U>
-requires WeaklyEqualityComparableWith<T, U>
+  requires WeaklyEqualityComparableWith<T, U>
 bool foo(T x, U y) {
   if ((x == y) && (y != x)) {
     std::cout << "comparison is weak" << std::endl;

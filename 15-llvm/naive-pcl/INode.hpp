@@ -12,9 +12,8 @@
 
 #pragma once
 
-#include <string>
-
 #include "llvm/IR/Value.h"
+#include <string>
 
 namespace Node {
 
