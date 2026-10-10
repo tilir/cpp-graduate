@@ -43,6 +43,9 @@ add_flex_bison_dependency(scanner parser)
 set_source_files_properties(driver.cc PROPERTIES
   OBJECT_DEPENDS "${BISON_parser_OUTPUT_HEADER}")
 
+# Generated scanner/parser code is owned by Flex/Bison, not the course.
+set_source_files_properties(${FLEX_scanner_OUTPUTS} ${BISON_parser_OUTPUTS} PROPERTIES SKIP_LINTING ON)
+
 add_executable(${COMPILE_NAME} 
   driver.cc
   Node.cc

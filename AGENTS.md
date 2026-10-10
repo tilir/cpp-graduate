@@ -56,7 +56,10 @@ cmake --build build-iwyu -j
 
 This runs IWYU (with `--quoted_includes_first`, matching the include-order
 rule above) on every translation unit; its diagnostics are advisory and part of the build
-log. Use IWYU 0.25 with Clang/LLVM 21. See `.github/workflows/ci.yml` for the CI job.
+log. Use CMake 3.27+ and IWYU 0.25 with Clang/LLVM 21. Generated Flex/Bison
+sources have `SKIP_LINTING`; project headers are checked with `--check_also`.
+The `ci/iwyu*.imp` files map internal headers to public APIs.
+See `.github/workflows/ci.yml` for the CI job.
 
 ## Intentional compile-error demos
 
@@ -67,6 +70,10 @@ the build (`INTENTIONAL_ERRORS` in `CMakeLists.txt`), e.g.
 them back to the build.
 
 ## Notes
+
+- Preserve intentional warnings listed in README (wrong `new`/`delete`, name
+  hiding, incomplete OCP switch, catch ordering, implicit `this` capture and
+  the ambiguous `numgrammar-sr.y` grammar). Do not suppress them globally.
 
 - `05-opers/binaryop-resolved.cc` is built with `-DNOFAIL` (the only
   configuration that is meant to compile).

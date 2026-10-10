@@ -13,7 +13,9 @@
 #pragma once
 
 #include "numgrammar.tab.hh"
+
 #include <FlexLexer.h>
+#include <string>
 
 namespace yy {
 

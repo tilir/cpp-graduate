@@ -7,6 +7,7 @@
 //
 //------------------------------------------------------------------------------
 
+#include <cstdlib>
 #include <iostream>
 
 extern "C" void __pcl_start();

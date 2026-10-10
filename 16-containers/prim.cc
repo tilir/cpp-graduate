@@ -10,13 +10,13 @@
 //
 //------------------------------------------------------------------------------
 
-#include <algorithm>
 #include <cassert>
 #include <climits>
 #include <iostream>
-#include <iterator>
 #include <list>
 #include <queue>
+#include <stdexcept>
+#include <utility>
 #include <vector>
 
 using VertexTy = int;

@@ -20,8 +20,13 @@
 #define CL_HPP_ENABLE_EXCEPTIONS
 
 #include "CL/opencl.hpp"
+
+#include <CL/cl.h>
+#include <CL/cl_platform.h>
+#include <cstddef>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
 namespace {

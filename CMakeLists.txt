@@ -40,9 +40,15 @@ option(ENABLE_IWYU "Run include-what-you-use on every translation unit" OFF)
 option(REQUIRE_LLVM "Fail configuration if LLVM 21 is unavailable" OFF)
 option(ENABLE_FORMAT_CHECK "Require clang-format-21 and register its CTest check" OFF)
 if(ENABLE_IWYU)
+  if(CMAKE_VERSION VERSION_LESS 3.27)
+    message(FATAL_ERROR "ENABLE_IWYU requires CMake 3.27+ to exclude generated sources")
+  endif()
   find_program(IWYU_EXECUTABLE NAMES include-what-you-use iwyu REQUIRED)
-  set(IWYU_COMMAND "${IWYU_EXECUTABLE}" "-Xiwyu" "--quoted_includes_first")
-  set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_COMMAND}")
+  set(IWYU_COMMAND "${IWYU_EXECUTABLE}" "-Xiwyu" "--quoted_includes_first"
+    "-Xiwyu" "--mapping_file=${CMAKE_CURRENT_SOURCE_DIR}/ci/iwyu.imp"
+    "-Xiwyu" "--check_also=${CMAKE_CURRENT_SOURCE_DIR}/*")
+  set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${IWYU_COMMAND}
+    "-Xiwyu" "--mapping_file=${CMAKE_CURRENT_SOURCE_DIR}/ci/iwyu-cxx.imp")
   set(CMAKE_C_INCLUDE_WHAT_YOU_USE "${IWYU_COMMAND}")
   message(STATUS "IWYU enabled: ${IWYU_EXECUTABLE}")
 endif()
@@ -239,6 +245,7 @@ if(BUILD_TESTING)
       foreach(t "fib/file.pcl 25 15-llvm/tests-pcl/fib/file.out"
                 "simplest/addsub.pcl 5 ci/expected/addsub.out"
                 "simplest/addsubif.pcl 5 ci/expected/addsubif.out"
+                "simplest/parentheses.pcl 2 ci/expected/parentheses.out"
                 "collatz/basic.pcl 27 ci/expected/collatz-basic.out")
         string(REGEX MATCH "^([^ ]+) ([^ ]+) (.+)$" m "${t}")
         set(pcl "${CMAKE_MATCH_1}")

@@ -12,7 +12,7 @@
 
 #include <concepts>
 #include <iostream>
-#include <utility>
+#include <type_traits>
 
 template <class T, class U>
 concept WeaklyEqualityComparableWith = requires(

@@ -11,13 +11,20 @@
 //------------------------------------------------------------------------------
 
 #include "Codegen.hpp"
+#include "INode.hpp"
 #include "parser.hpp"
-#include <filesystem>
-#include <fstream>
+
+#include <cstdio>
+#include <cstring>
+#include <exception>
 #include <iostream>
-#include <map>
 #include <memory>
+#include <stdexcept>
+
+#if CODEGEN == 1
+#include <filesystem>
 #include <string>
+#endif
 
 Node::IScope *CurrentScope = nullptr;
 std::unique_ptr<CodeGen> GlobalGen = nullptr;

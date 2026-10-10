@@ -20,18 +20,22 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <cstddef>
+#include <cstdint>
+#include <exception>
 #include <fstream>
+#include <glm/glm.hpp>
 #include <iostream>
+#include <iterator>
 #include <memory>
 #include <set>
 #include <sstream>
 #include <stdexcept>
+#include <string>
 #include <vector>
+#include <vulkan/vulkan.h>
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/ext.hpp>
-#include <glm/glm.hpp>
-#include <glm/gtx/string_cast.hpp>
+struct vulkan_error;
 
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
@@ -1074,6 +1078,9 @@ int main() try {
     break;
   case VK_ERROR_DEVICE_LOST:
     std::cerr << "VK_ERROR_DEVICE_LOST\n";
+    break;
+  default:
+    std::cerr << "Unhandled Vulkan result: " << static_cast<int>(E.Res) << '\n';
     break;
   }
 } catch (glfw_error &E) {

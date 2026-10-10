@@ -14,8 +14,14 @@
 #include "idomain.hpp"
 #include "permloops.hpp"
 #include "perms.hpp"
+
+#include <algorithm>
+#include <array>
 #include <iostream>
 #include <iterator>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>
 #include <vector>
 
 // permutation loops application:

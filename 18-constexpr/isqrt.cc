@@ -11,7 +11,7 @@
 //------------------------------------------------------------------------------
 
 #include <iostream>
-#include <utility>
+#include <type_traits>
 
 template <int N, int L = 1, int H = N, int mid = (L + H + 1) / 2>
 struct Sqrt : std::integral_constant<

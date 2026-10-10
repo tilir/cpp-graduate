@@ -15,7 +15,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdio>
-#include <cstring>
+#include <cstdlib>
 #include <ctime>
 
 int main(int argc, char **argv) {

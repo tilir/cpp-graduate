@@ -29,19 +29,22 @@
 #define CL_HPP_ENABLE_EXCEPTIONS
 
 #include "CL/opencl.hpp"
-#include <algorithm>
+
+#include <CL/cl.h>
+#include <CL/cl_platform.h>
 #include <cassert>
 #include <charconv>
 #include <chrono>
+#include <cstddef>
 #include <fstream>
 #include <iostream>
-#include <numeric>
 #include <random>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <string_view>
 #include <system_error>
+#include <utility>
 #include <vector>
 
 #ifndef COMPARE_CPU

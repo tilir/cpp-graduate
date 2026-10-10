@@ -14,11 +14,18 @@
 
 #include "Codegen.hpp"
 #include "INode.hpp"
+#include "llvm/IR/Constant.h"
+#include "llvm/IR/Constants.h"
+
 #include <iostream>
-#include <map>
+#include <memory>
 #include <string>
 #include <typeinfo>
 #include <vector>
+
+namespace llvm {
+class Value;
+} // namespace llvm
 
 namespace Node {
 

@@ -40,6 +40,9 @@ add_flex_bison_dependency(scanner parser)
 set_source_files_properties(simplest.cc PROPERTIES
   OBJECT_DEPENDS "${BISON_parser_OUTPUT_HEADER}")
 
+# Generated scanner/parser code is owned by Flex/Bison, not the course.
+set_source_files_properties(${FLEX_scanner_OUTPUTS} ${BISON_parser_OUTPUTS} PROPERTIES SKIP_LINTING ON)
+
 add_executable(${PROJECT_NAME} 
   simplest.cc  
   ${BISON_parser_OUTPUTS}

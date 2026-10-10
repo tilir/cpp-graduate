@@ -11,6 +11,7 @@
 //------------------------------------------------------------------------------
 
 #include <climits>
+#include <cstddef>
 #include <iostream>
 
 template <typename T> struct my_numeric_limits;

@@ -17,9 +17,14 @@
 //-----------------------------------------------------------------------------
 
 #include <algorithm>
+#include <cstddef>
 #include <initializer_list>
 #include <iostream>
+#include <iterator>
 #include <memory>
+#include <new>
+#include <stdexcept>
+#include <type_traits>
 #include <utility>
 #include <vector>
 

@@ -16,7 +16,9 @@
 //----------------------------------------------------------------------------
 
 #include <cassert>
+#include <ctime>
 #include <iostream>
+#include <iterator>
 #include <vector>
 
 template <typename T> class Matrix {

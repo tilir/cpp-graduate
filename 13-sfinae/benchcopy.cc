@@ -24,8 +24,10 @@
 #include <chrono>
 #include <cstring>
 #include <iostream>
-#include <list>
+#include <iterator>
 #include <random>
+#include <string>
+#include <utility>
 #include <vector>
 
 #ifndef STANDARD

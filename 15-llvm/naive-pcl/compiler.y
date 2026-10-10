@@ -24,6 +24,10 @@
 %token WHILE IF
 %token SM LBR RBR LPAR RPAR LCB RCB ILLEGAL
 %token OUTPUT
+// Prefer arithmetic parentheses over reducing expr to lexpr on a closing ')'.
+// This preserves the previous default shift without an ambiguous parse table.
+%precedence EXPR_AS_LOGICAL
+%precedence RPAR
 %right ASG
 %nonassoc RELOP
 %left INPUT
@@ -99,7 +103,7 @@ if_head:      IF LPAR lexpr RPAR      {
                                         $$ = $3;
                                       }
 
-lexpr:        expr                    { $$ = $1; }
+lexpr:        expr %prec EXPR_AS_LOGICAL { $$ = $1; }
             | expr RELOP expr         { $$.treeNode = makeOperand($1.treeNode, $2.op, $3.treeNode); }
             | lexpr OR lexpr          { $$.treeNode = makeOperand($1.treeNode, Node::Operation::Or, $3.treeNode); }
             | lexpr AND lexpr         { $$.treeNode = makeOperand($1.treeNode, Node::Operation::And, $3.treeNode); }

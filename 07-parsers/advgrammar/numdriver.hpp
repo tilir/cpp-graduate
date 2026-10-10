@@ -13,10 +13,13 @@
 #pragma once
 
 #include "numgrammar.tab.hh"
-#include <iostream>
-#include <numeric>
 
 #include <FlexLexer.h>
+#include <iostream>
+#include <numeric>
+#include <string>
+#include <utility>
+#include <vector>
 
 namespace yy {
 

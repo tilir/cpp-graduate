@@ -37,7 +37,7 @@ std::ostream &operator<<(std::ostream &os, Complex rhs) {
   return os;
 }
 
-constexpr Complex operator"" _i(long double arg) {
+constexpr Complex operator""_i(long double arg) {
   return Complex{0.0, static_cast<double>(arg)};
 }
 

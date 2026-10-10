@@ -12,9 +12,9 @@
 //----------------------------------------------------------------------------
 
 #pragma once
-#include <array>
 #include <cassert>
 #include <cmath>
+#include <cstddef>
 #include <iostream>
 #include <vector>
 

@@ -12,10 +12,12 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <iostream>
 #include <list>
 #include <new>
-#include <stdexcept>
+
+#ifdef USECOUT
+#include <iostream>
+#endif
 
 void *operator new(std::size_t n) {
   void *p = std::malloc(n);

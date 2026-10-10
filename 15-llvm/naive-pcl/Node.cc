@@ -11,9 +11,12 @@
 //------------------------------------------------------------------------------
 
 #include "Node.hpp"
+
+#if CODEGEN == 1
 #include "Codegen.hpp"
+#endif
 #include "Symtab.hpp"
-#include <map>
+
 #include <stdexcept>
 #include <string>
 

@@ -3,6 +3,7 @@
 #include "lru.h"
 
 #include <assert.h>
+#include <stddef.h>
 #include <stdint.h>
 
 int main(void) {

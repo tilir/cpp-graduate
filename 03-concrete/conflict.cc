@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-struct Foo;
+struct Foo; // IWYU pragma: keep
 struct Bar;
 
 struct Foo {

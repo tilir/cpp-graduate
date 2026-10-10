@@ -11,7 +11,6 @@
 //------------------------------------------------------------------------------
 
 #include <string>
-#include <utility>
 
 template <typename T, typename U>
   requires requires(T t, U u) { t == u; }

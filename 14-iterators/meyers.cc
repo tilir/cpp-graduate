@@ -14,7 +14,8 @@
 #include <iostream>
 #include <iterator>
 #include <list>
-#include <string>
+#include <type_traits>
+#include <typeinfo>
 #include <vector>
 
 template <typename C, typename It>

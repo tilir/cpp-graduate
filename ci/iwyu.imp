@@ -1,0 +1,43 @@
+# Public entry points for libraries whose headers lack IWYU export annotations.
+[
+  {
+    "include": [
+      "@<glm/detail/.*>",
+      "private",
+      "<glm/glm.hpp>",
+      "public"
+    ]
+  },
+  {
+    "include": [
+      "@<glm/ext/vector_float[234]\\.hpp>",
+      "private",
+      "<glm/glm.hpp>",
+      "public"
+    ]
+  },
+  {
+    "include": [
+      "@<pstl/.*>",
+      "private",
+      "<execution>",
+      "public"
+    ]
+  },
+  {
+    "include": [
+      "<vulkan/vulkan_core.h>",
+      "private",
+      "<vulkan/vulkan.h>",
+      "public"
+    ]
+  },
+  {
+    "symbol": [
+      "std::pair",
+      "full",
+      "<utility>",
+      "public"
+    ]
+  }
+]

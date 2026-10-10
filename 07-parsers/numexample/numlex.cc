@@ -10,8 +10,6 @@
 //
 //----------------------------------------------------------------------------
 
-#include <iostream>
-
 #include <FlexLexer.h>
 
 // here we can return non-zero if lexing is not done inspite of EOF detected

@@ -10,7 +10,6 @@
 //
 //-----------------------------------------------------------------------------
 
-#include <cmath>
 #include <iostream>
 
 template <typename T> struct Point {

@@ -14,7 +14,7 @@
 #include <iostream>
 
 // binary suffix
-template <char... Chars> constexpr int operator"" _binary() {
+template <char... Chars> constexpr int operator""_binary() {
   std::array<int, sizeof...(Chars)> arr{Chars...};
   int sum = 0;
   for (auto c : arr)

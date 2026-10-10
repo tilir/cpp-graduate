@@ -11,7 +11,6 @@
 //------------------------------------------------------------------------------
 
 #include <iostream>
-#include <vector>
 
 // compile time only
 consteval int ctsqr(int n) { return n * n; }

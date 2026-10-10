@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <memory>
-#include <stdexcept>
+#include <new>
 #include <utility>
 
 struct Controllable final {

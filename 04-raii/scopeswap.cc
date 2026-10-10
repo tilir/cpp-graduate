@@ -11,6 +11,8 @@
 //----------------------------------------------------------------------------
 
 #include <iostream>
+#include <type_traits>
+#include <utility>
 
 template <typename T> class scoped_nomove {
   T *ptr_;

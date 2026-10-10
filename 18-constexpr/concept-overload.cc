@@ -10,9 +10,7 @@
 //
 //------------------------------------------------------------------------------
 
-#include <concepts>
 #include <iterator>
-#include <utility>
 
 template <std::input_iterator Iter>
 typename Iter::difference_type my_distance(Iter first, Iter last) {

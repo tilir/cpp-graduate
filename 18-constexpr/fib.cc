@@ -11,7 +11,7 @@
 //------------------------------------------------------------------------------
 
 #include <iostream>
-#include <utility>
+#include <type_traits>
 
 template <int N>
 struct fibonacci

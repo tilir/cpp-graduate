@@ -11,10 +11,21 @@
 //------------------------------------------------------------------------------
 
 #include "Codegen.hpp"
+
 #include "INode.hpp"
+#include "llvm/ADT/ArrayRef.h"
+#include "llvm/IR/Constant.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/Support/raw_ostream.h"
+
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <system_error>
+
+namespace llvm {
+class Value;
+} // namespace llvm
 
 void CodeGen::SaveModule(std::string ModuleName) {
   std::error_code EC;

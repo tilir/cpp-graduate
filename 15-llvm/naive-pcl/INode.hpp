@@ -12,8 +12,11 @@
 
 #pragma once
 
-#include "llvm/IR/Value.h"
 #include <string>
+
+namespace llvm {
+class Value;
+} // namespace llvm
 
 namespace Node {
 

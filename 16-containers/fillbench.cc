@@ -12,6 +12,7 @@
 
 #include <benchmark/benchmark.h>
 #include <deque>
+#include <string>
 #include <vector>
 
 static void DequeFill(benchmark::State &state) {

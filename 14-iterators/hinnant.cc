@@ -14,7 +14,7 @@
 #include <iostream>
 #include <iterator>
 #include <list>
-#include <string>
+#include <typeinfo>
 #include <vector>
 
 template <typename Container, typename ConstIterator>

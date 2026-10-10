@@ -20,6 +20,9 @@ flex_target(scanner
   ${CMAKE_CURRENT_BINARY_DIR}/lexer.cc
 )
 
+# Generated scanner/parser code is owned by Flex/Bison, not the course.
+set_source_files_properties(${FLEX_scanner_OUTPUTS} PROPERTIES SKIP_LINTING ON)
+
 add_executable(${PROJECT_NAME} 
   numlex.cc  
   ${FLEX_scanner_OUTPUTS}

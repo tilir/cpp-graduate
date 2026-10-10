@@ -11,7 +11,8 @@
 //----------------------------------------------------------------------------
 
 #include "numlexer.hpp"
-#include <iostream>
+
+#include <FlexLexer.h>
 #include <memory>
 
 int yyFlexLexer::yywrap() { return 1; }

@@ -33,13 +33,20 @@
 
 #include <algorithm>
 #include <array>
-#include <cassert>
-#include <iostream>
+#include <cstddef>
+#include <initializer_list>
 #include <iterator>
 #include <numeric>
 #include <sstream>
+#include <stdexcept>
 #include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+#ifdef CHECKS
 #include <unordered_set>
+#endif
 
 //------------------------------------------------------------------------------
 //

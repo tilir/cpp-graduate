@@ -10,9 +10,10 @@
 //
 //----------------------------------------------------------------------------
 
+#include <cstdio>
 #include <cstdlib>
-#include <iostream>
 #include <list>
+#include <new>
 
 void *operator new(std::size_t n) {
   void *p = malloc(n);

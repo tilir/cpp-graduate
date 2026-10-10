@@ -10,8 +10,8 @@
 //
 //----------------------------------------------------------------------------
 
+#include <exception>
 #include <iostream>
-#include <stdexcept>
 
 int nsucc = 10;
 int nctors = 0;

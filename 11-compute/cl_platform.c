@@ -17,8 +17,10 @@
 #endif
 
 #include "CL/cl.h"
+#include <CL/cl_platform.h>
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 struct platforms_t {
   cl_uint n;

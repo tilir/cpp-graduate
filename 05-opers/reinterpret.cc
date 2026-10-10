@@ -29,7 +29,7 @@ int main() {
   std::cout << "uq = " << uq << std::endl;
 
   // bug when using reinterpret where const required
-  char c = 161;
+  char c = static_cast<char>(161);
   std::cout << "char # " << static_cast<int>(c) << std::endl;
 #ifdef REINTS
   std::cout << "char # " << reinterpret_cast<int>(c) << std::endl;

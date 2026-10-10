@@ -31,14 +31,16 @@
 #ifndef PERMLOOPS_GUARD_
 #define PERMLOOPS_GUARD_
 
-#include "permcommon.hpp"
 #include <algorithm>
 #include <cassert>
-#include <iostream>
+#include <cstddef>
+#include <initializer_list>
 #include <iterator>
 #include <numeric>
 #include <sstream>
+#include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <unordered_set>
 #include <vector>
 

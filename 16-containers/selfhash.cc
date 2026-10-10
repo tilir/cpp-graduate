@@ -10,9 +10,12 @@
 //
 //------------------------------------------------------------------------------
 
+#include <cstddef>
 #include <iostream>
 #include <string>
+#include <string_view>
 #include <unordered_map>
+#include <utility>
 
 struct S {
   std::string first_name, last_name;

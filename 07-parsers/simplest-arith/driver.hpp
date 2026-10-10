@@ -13,7 +13,11 @@
 #pragma once
 
 #include "simplest.tab.hh"
+
 #include <FlexLexer.h>
+#include <exception>
+#include <iostream>
+#include <string>
 
 namespace yy {
 

@@ -14,12 +14,13 @@
 //
 //----------------------------------------------------------------------------
 
+#include <GLFW/glfw3.h>
 #include <cassert>
+#include <cstddef>
+#include <exception>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
-
-#include <GLFW/glfw3.h>
 
 // initial window sizes
 constexpr int SZX = 600;

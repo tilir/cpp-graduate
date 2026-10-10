@@ -10,8 +10,6 @@
 //
 //----------------------------------------------------------------------------
 
-#include <iostream>
-
 //------------------------------------------------------------------------------
 //
 //  Bases
@@ -107,7 +105,7 @@ struct PrivateDerive2 : private PrivateDerive {
 
 int main() {
   PublicDerive a;
-  a.open;
+  (void)a.open;
   // a.semiclosed;
   // a.closed;
 

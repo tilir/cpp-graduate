@@ -17,12 +17,14 @@
 
 #pragma once
 
-#include <algorithm>
+#include <array>
+#include <cstddef>
+#include <functional>
 #include <iostream>
 #include <numeric>
 #include <stdexcept>
 #include <string>
-#include <vector>
+#include <string_view>
 
 template <typename T, T start_, T fin_> class Idom {
   T val_;

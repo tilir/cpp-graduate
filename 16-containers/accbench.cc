@@ -13,6 +13,7 @@
 #include <benchmark/benchmark.h>
 #include <deque>
 #include <random>
+#include <string>
 #include <vector>
 
 static std::random_device rd;

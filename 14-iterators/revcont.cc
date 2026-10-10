@@ -11,6 +11,7 @@
 //-----------------------------------------------------------------------------
 
 #include <iostream>
+#include <iterator>
 #include <vector>
 
 template <typename T> struct reversion_wrapper {

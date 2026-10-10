@@ -11,9 +11,11 @@
 //------------------------------------------------------------------------------
 
 #include <algorithm>
+#include <compare>
 #include <iostream>
 #include <iterator>
 #include <numeric>
+#include <stdexcept>
 #include <vector>
 
 template <typename RandIt> void repose(RandIt first, RandIt last, RandIt pos) {

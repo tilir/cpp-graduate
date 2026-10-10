@@ -12,6 +12,8 @@
 
 #include "driver.hpp"
 
+#include <FlexLexer.h>
+
 // here we can return non-zero if lexing is not done inspite of EOF detected
 int yyFlexLexer::yywrap() { return 1; }
 

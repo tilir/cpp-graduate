@@ -47,7 +47,7 @@ archives and build files; formatting also excludes intentional compile-error
 demos. Quoted includes precede system includes. Include groups stay separate
 to preserve OpenCL macros and generated headers that require declarations first.
 
-For include suggestions, use IWYU 0.25 built against Clang 21, following the
+For include suggestions, use CMake 3.27+ and IWYU 0.25 built against Clang 21, following the
 [upstream compatibility table](https://github.com/include-what-you-use/include-what-you-use#clang-compatibility):
 
 ```sh
@@ -57,5 +57,17 @@ cmake -S . -B build-iwyu -DCMAKE_C_COMPILER=clang-21 \
 cmake --build build-iwyu --parallel 2
 ```
 
+IWYU checks lecture sources and their project headers. Generated Bison/Flex
+sources are excluded with `SKIP_LINTING`; `ci/iwyu*.imp` maps implementation
+headers to public library APIs. The parser wrapper exports its generated header,
+which requires `YYSTYPE` to be declared first.
+
 IWYU suggestions are advisory and uploaded as `iwyu.log` in CI. Build failures,
 runtime tests, include order and clang-format checks fail the workflow.
+
+Some build warnings are intentional lecture demonstrations: mismatched `new`/`delete`
+in `02-lrefs/newdelete.cc`, hidden overloads in `06-inheritance/namehide.cc`,
+the incomplete shape switch in `09-solid/ocp-bad.cc`, catch ordering in
+`08-exceptions/throws.cc`, deprecated implicit `this` capture in
+`17-algorithms/capture-body*.cc`, and ambiguous expressions in
+`07-parsers/numgrammar/numgrammar-sr.y`. Keep these examples and their warnings.

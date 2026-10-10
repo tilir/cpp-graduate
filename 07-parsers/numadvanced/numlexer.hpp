@@ -17,6 +17,7 @@
 #endif
 
 #include <iostream>
+#include <string>
 
 class NumLexer : public yyFlexLexer {
   std::string current_lexem;

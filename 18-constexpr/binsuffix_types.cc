@@ -10,7 +10,6 @@
 //
 //------------------------------------------------------------------------------
 
-#include <array>
 #include <iostream>
 
 // primary template
@@ -32,7 +31,7 @@ template <int Sum> struct binparser<Sum> {
 };
 
 // binary suffix
-template <char... Chars> constexpr int operator"" _binary() {
+template <char... Chars> constexpr int operator""_binary() {
   return binparser<0, Chars...>::value;
 }
 

@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------------
 //
 // Init order demo: static initialization order
-// compile with: 
+// compile with:
 // g++ module-2.cc module-1.cc
 // g++ module-1.cc module-2.cc
 //

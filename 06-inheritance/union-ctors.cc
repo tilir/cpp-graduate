@@ -12,6 +12,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <new>
 #include <string>
 #include <vector>
 

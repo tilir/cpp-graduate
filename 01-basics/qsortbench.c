@@ -15,7 +15,6 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
 
 int intless(const void *lhs, const void *rhs) {

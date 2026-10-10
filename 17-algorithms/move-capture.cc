@@ -10,8 +10,10 @@
 //
 //------------------------------------------------------------------------------
 
+#include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <utility>
 #include <vector>
 
 int main() {

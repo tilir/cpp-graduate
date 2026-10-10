@@ -11,8 +11,8 @@
 //----------------------------------------------------------------------------
 
 #include <cassert>
+#include <exception>
 #include <iostream>
-#include <stdexcept>
 
 struct File {
   int a;

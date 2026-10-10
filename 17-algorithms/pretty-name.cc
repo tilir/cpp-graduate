@@ -12,6 +12,7 @@
 
 #include <functional>
 #include <iostream>
+#include <typeinfo>
 
 int f(int a) { return a; }
 

@@ -14,8 +14,11 @@
 //----------------------------------------------------------------------------
 
 #include "controllable.hh"
+
 #include <cassert>
+#include <cstddef>
 #include <iostream>
+#include <new>
 #include <stdexcept>
 #include <utility>
 

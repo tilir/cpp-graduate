@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdio>
-#include <cstring>
+#include <cstdlib>
 #include <ctime>
 
 int greater(const int &lhs, const int &rhs) { return lhs > rhs; }

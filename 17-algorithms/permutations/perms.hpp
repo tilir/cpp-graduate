@@ -31,13 +31,18 @@
 
 #pragma once
 
-#include "permcommon.hpp"
 #include "permloops.hpp"
+
 #include <algorithm>
+#include <cstddef>
 #include <initializer_list>
 #include <iostream>
 #include <iterator>
+#include <stdexcept>
+#include <type_traits>
 #include <vector>
+
+template <typename T, T start_, T fin_> class Idom;
 
 //------------------------------------------------------------------------------
 //

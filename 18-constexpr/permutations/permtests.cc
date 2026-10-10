@@ -1,6 +1,10 @@
 #include "idomain.hpp"
 #include "permloops.hpp"
+
+#include <algorithm>
+#include <array>
 #include <iostream>
+#include <iterator>
 
 // permutation loops application:
 // (4, 2, 1, 3) applied to [1, 2, 3, 4] yields [3, 1, 4, 2]

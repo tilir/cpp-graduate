@@ -2,7 +2,10 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <list>
 #include <string>
+#include <unordered_map>
+#include <utility>
 
 void check(bool condition) {
   if (!condition) {

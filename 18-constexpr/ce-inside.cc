@@ -10,8 +10,8 @@
 //
 //------------------------------------------------------------------------------
 
+#include <initializer_list>
 #include <iostream>
-#include <vector>
 
 template <typename T> consteval auto ilist_sz(std::initializer_list<T> init) {
 #if defined(BAD)

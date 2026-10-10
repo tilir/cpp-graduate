@@ -10,8 +10,8 @@
 //
 //----------------------------------------------------------------------------
 
+#include <exception>
 #include <iostream>
-#include <stdexcept>
 
 struct my_exc1 : std::exception {
   char const *what() const noexcept override { return "exc1"; }
